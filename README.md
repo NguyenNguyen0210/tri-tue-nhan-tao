@@ -81,6 +81,27 @@ py ThuatToan/main.py
 
 ---
 
+### 6. Thuật toán IDA\* (Iterative Deepening A\* - Tìm kiếm A\* sâu dần)
+* **Cơ chế hoạt động**: IDA\* kết hợp cơ chế giới hạn ngưỡng chi phí của thuật toán IDS với hàm đánh giá heuristic thông minh của A\*. 
+  - Thay vì tăng giới hạn độ sâu từng cấp như IDS, IDA\* sử dụng ngưỡng cắt dựa trên giá trị hàm số $f(n) = g(n) + h(n)$ (với $g(n)$ là khoảng cách Manhattan và $h(n)$ là số ô sai vị trí `misplaced`).
+  - Trong mỗi vòng lặp, thuật toán thực hiện tìm kiếm theo chiều sâu (DFS). Nếu gặp một nút có $f(n)$ vượt quá ngưỡng hiện tại (`f_limit`), nhánh đó sẽ bị cắt (`cutoff`).
+  - Khi một vòng lặp tìm kiếm kết thúc mà không tìm thấy đích, ngưỡng giới hạn tiếp theo sẽ được cập nhật bằng giá trị $f(n)$ nhỏ nhất trong số các nút bị cắt nhánh mà vượt quá ngưỡng cũ.
+* **Đặc điểm**:
+  - **Tối ưu và Hoàn chỉnh**: Đảm bảo tìm ra lời giải tối ưu tương tự A\* (do ngưỡng $f$ tăng dần và hàm heuristic chấp nhận được).
+  - **Tiết kiệm bộ nhớ**: Khắc phục hoàn toàn nhược điểm tiêu tốn bộ nhớ của A\* bằng cách chỉ lưu trữ nhánh tìm kiếm hiện tại trên ngăn xếp (độ phức tạp không gian chỉ là tuyến tính so với độ sâu đường đi).
+  - **Cơ chế chống lặp**: Kiểm tra và loại bỏ chu kỳ trên nhánh tìm kiếm hiện tại tương tự DFS/IDS.
+
+---
+
+### 7. Thuật toán Simple Hill Climbing (Tìm kiếm leo đồi đơn giản)
+* **Cơ chế hoạt động**: Là thuật toán tìm kiếm cục bộ (local search). Từ trạng thái hiện tại, thuật toán duyệt qua các trạng thái lân cận theo thứ tự và di chuyển ngay lập tức sang trạng thái lân cận đầu tiên tìm thấy có giá trị hàm heuristic tốt hơn (khoảng cách Manhattan nhỏ hơn).
+* **Đặc điểm**:
+  - **Không hoàn chỉnh**: Dễ bị kẹt tại các cực trị địa phương (local optimum) hoặc các cao nguyên (plateau/shoulder), nơi không có trạng thái lân cận nào tốt hơn trạng thái hiện tại, ngay cả khi chưa đạt tới đích. Khi bị kẹt, ứng dụng sẽ thông báo trạng thái dừng lại bằng biểu tượng kẹt `⛰️`.
+  - **Không tối ưu**: Chỉ di chuyển theo độ dốc heuristic tốt hơn đầu tiên mà không có cái nhìn toàn cục, do đó đường đi tìm được (nếu có) có thể không phải là ngắn nhất.
+  - **Cực kỳ tiết kiệm bộ nhớ**: Chỉ lưu trữ trạng thái hiện tại và đánh giá các lân cận của nó, không duy trì danh sách biên mở rộng (frontier) lớn như BFS hay A\*.
+
+---
+
 ## 🎨 Giao diện & Các tính năng tương tác hỗ trợ
 
 * **Midnight Navy Theme**: Giao diện tối hiện đại, hạn chế mỏi mắt, phân biệt rõ các vùng chức năng bằng độ tương phản màu sắc hợp lý.
