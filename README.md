@@ -111,6 +111,33 @@ py ThuatToan/main.py
 
 ---
 
+### 9. Thuật toán Stochastic Hill Climbing (Tìm kiếm leo đồi ngẫu nhiên)
+* **Cơ chế hoạt động**: Stochastic Hill Climbing là một biến thể của leo đồi. Thay vì chọn lân cận tốt hơn đầu tiên (Simple) hay tốt nhất (Steepest-Ascent), thuật toán này lọc ra *tất cả* các trạng thái lân cận tốt hơn trạng thái hiện tại (khoảng cách Manhattan nhỏ hơn), sau đó chọn **ngẫu nhiên** một trạng thái trong số đó để di chuyển tới.
+* **Đặc điểm**:
+  - **Tính ngẫu nhiên**: Các lần chạy khác nhau với cùng một trạng thái bắt đầu có thể tạo ra các đường đi hoặc kết quả khác nhau (giải được hoặc bị kẹt ở các cực trị địa phương khác nhau).
+  - **Tránh cực trị địa phương**: Việc chọn ngẫu nhiên giúp thuật toán thỉnh thoảng có cơ hội thoát khỏi các vùng phẳng hoặc đi theo các nhánh khác nhau để tránh rơi vào cùng một cực trị cục bộ cố định như leo đồi tất định.
+  - **Tiết kiệm bộ nhớ**: Chỉ cần lưu trữ các lân cận tốt hơn của trạng thái hiện tại tại mỗi bước duyệt.
+
+---
+
+### 10. Thuật toán Random Restart Hill Climbing (Leo đồi khởi động lại ngẫu nhiên)
+* **Cơ chế hoạt động**: Thuật toán leo đồi dốc nhất (Steepest-Ascent Hill Climbing) được thực thi từ trạng thái bắt đầu. Nếu thuật toán bị kẹt ở cực trị cục bộ (local optimum) hoặc cao nguyên nhiễu mà chưa đạt đến đích, thuật toán sẽ tự động **khởi động lại (restart)** bằng cách phát sinh một trạng thái solvable khởi đầu ngẫu nhiên mới và tiếp tục thực hiện leo đồi từ đó. Quá trình này được lặp đi lặp lại cho đến khi tìm thấy trạng thái đích hoặc đạt giới hạn tối đa số bước duyệt.
+* **Đặc điểm**:
+  - **Độ tin cậy cực cao**: Khắc phục nhược điểm cốt lõi của leo đồi thông thường bằng cách tự động vượt qua các cực trị cục bộ nhờ các lần khởi động lại ngẫu nhiên. Gần như 100% tìm thấy đích nếu cấu hình số lần restart hoặc số bước duyệt đủ lớn.
+  - **Giải pháp tối ưu cục bộ**: Đường đi dẫn tới đích là đường đi tính từ trạng thái khởi tạo ngẫu nhiên thành công cuối cùng tới đích. Các đường đi kẹt trước đó sẽ được ghi nhận và hiển thị dạng bước chuyển đổi `🔄 KHỞI ĐỘNG LẠI` trong lịch sử trực quan hóa.
+  - **Dễ dàng theo dõi**: Giao diện hiển thị trực quan số lần restart hiện tại trên thẻ thông số chuyên biệt để người dùng nắm bắt tần suất kẹt của cấu hình bàn cờ hiện tại.
+
+---
+
+### 11. Thuật toán Local Beam Search (Tìm kiếm theo chùm cục bộ)
+* **Cơ chế hoạt động**: Khác với leo đồi chỉ duy trì một trạng thái hiện tại, Local Beam Search duy trì một tập hợp gồm $k$ trạng thái (trong ứng dụng này $k=4$). Ở mỗi bước, thuật toán tạo ra tất cả các trạng thái lân cận của cả $k$ trạng thái này. Sau đó, nó sẽ đánh giá và chỉ chọn ra đúng $k$ trạng thái có giá trị heuristic tốt nhất từ toàn bộ các trạng thái vừa sinh ra để làm tập trạng thái cho bước tiếp theo.
+* **Đặc điểm**:
+  - **Khám phá song song hiệu quả**: Việc duy trì $k$ trạng thái giúp thuật toán đồng thời khám phá nhiều nhánh hứa hẹn, vượt trội hơn so với việc chạy leo đồi độc lập $k$ lần vì các nhánh sinh ra từ cùng một chùm có thể chia sẻ thông tin (những nhánh xấu sẽ nhanh chóng bị loại bỏ để nhường chỗ cho các lân cận tốt hơn từ nhánh khác).
+  - **Tránh điểm mù cục bộ**: Khả năng duy trì nhiều trạng thái giúp thuật toán ít bị kẹt vào các cực trị địa phương hơn so với leo đồi thông thường.
+  - **Tiết kiệm bộ nhớ hơn A\***: Chỉ lưu trữ tối đa $k$ trạng thái tốt nhất ở mỗi cấp độ, giải quyết vấn đề bùng nổ không gian bộ nhớ của A\* trong khi vẫn có cái nhìn bao quát hơn Hill Climbing.
+
+---
+
 ## 🎨 Giao diện & Các tính năng tương tác hỗ trợ
 
 * **Midnight Navy Theme**: Giao diện tối hiện đại, hạn chế mỏi mắt, phân biệt rõ các vùng chức năng bằng độ tương phản màu sắc hợp lý.
