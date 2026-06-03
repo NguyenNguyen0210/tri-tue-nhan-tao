@@ -102,6 +102,15 @@ py ThuatToan/main.py
 
 ---
 
+### 8. Thuật toán Steepest-Ascent Hill Climbing (Tìm kiếm leo đồi dốc nhất)
+* **Cơ chế hoạt động**: Khác với Simple Hill Climbing di chuyển sang lân cận tốt hơn *đầu tiên*, Steepest-Ascent Hill Climbing đánh giá *tất cả* các trạng thái lân cận của trạng thái hiện tại và chọn ra trạng thái có giá trị hàm heuristic tốt nhất (khoảng cách Manhattan nhỏ nhất). Thuật toán chỉ di chuyển tới trạng thái tốt nhất này nếu nó có chi phí tốt hơn trạng thái hiện tại.
+* **Đặc điểm**:
+  - **Dễ kẹt cực trị**: Giống như Simple Hill Climbing, nó dễ bị kẹt tại các cực trị địa phương (local optimum) hoặc cao nguyên (plateau). Ứng dụng cũng hiển thị biểu tượng kẹt `⛰️` để biểu thị trạng thái dừng lại khi kẹt.
+  - **Tối ưu hơn cục bộ**: Bằng cách chọn hướng đi có độ dốc cao nhất (dốc nhất), thuật toán thường tiếp cận đích nhanh hơn Simple Hill Climbing ở mỗi bước di chuyển cục bộ.
+  - **Tiết kiệm bộ nhớ**: Giống các thuật toán tìm kiếm cục bộ khác, nó chỉ lưu giữ trạng thái hiện tại và các lân cận của nó tại mỗi bước.
+
+---
+
 ## 🎨 Giao diện & Các tính năng tương tác hỗ trợ
 
 * **Midnight Navy Theme**: Giao diện tối hiện đại, hạn chế mỏi mắt, phân biệt rõ các vùng chức năng bằng độ tương phản màu sắc hợp lý.
