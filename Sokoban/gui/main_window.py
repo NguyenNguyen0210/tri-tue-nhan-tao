@@ -1,7 +1,7 @@
 import time
 from PyQt5.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QGridLayout,
-    QLabel, QPushButton, QComboBox, QListWidget, QListWidgetItem, QScrollArea
+    QLabel, QPushButton, QComboBox, QListWidget, QListWidgetItem, QScrollArea, QGroupBox
 )
 from PyQt5.QtCore import Qt, QTimer, QSize
 from PyQt5.QtGui import QPainter, QColor, QFont, QPen, QBrush
