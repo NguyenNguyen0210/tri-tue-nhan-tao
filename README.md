@@ -44,7 +44,9 @@ Nhóm thuật toán này tìm kiếm lời giải mà không sử dụng bất k
 
   **Hình ảnh minh họa quá trình chạy BFS:**
   
-  <video src="https://github.com/user-attachments/assets/4699db84-3ad6-4cc1-9e07-efbf14314b29" controls="controls" style="max-width: 100%;"></video>
+  <video src="https://github.com/user-attachments/assets/4699db84-3ad6-4cc1-9e07-efbf14314b29" controls muted style="max-width: 100%;"></video>
+
+
 
 
 * **DFS (Depth-First Search):**
