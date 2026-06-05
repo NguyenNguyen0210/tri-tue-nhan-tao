@@ -11,7 +11,7 @@ from config import (
     TEXT, TEXT_DIM, PURPLE, PURPLE_BG, GOAL
 )
 from gui.widgets import BoardWidget, MiniBoard
-from algorithms import astar_steps, idastar_steps, hillclimbing_steps, steepest_hillclimbing_steps, stochastic_hillclimbing_steps, random_restart_hillclimbing_steps, localbeam_steps, ucs_steps, bfs_steps, dfs_steps, ids_steps
+from algorithms import astar_steps, idastar_steps, greedy_steps, hillclimbing_steps, steepest_hillclimbing_steps, stochastic_hillclimbing_steps, random_restart_hillclimbing_steps, localbeam_steps, ucs_steps, bfs_steps, dfs_steps, ids_steps
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -240,6 +240,7 @@ class MainWindow(QMainWindow):
         self.algo_combo = QComboBox()
         self.algo_combo.addItem("A*  —  A* Search")
         self.algo_combo.addItem("IDA*  —  Iterative Deepening A*")
+        self.algo_combo.addItem("Greedy Search  —  Greedy Best First Search")
         self.algo_combo.addItem("Simple Hill Climbing  —  Local Search")
         self.algo_combo.addItem("Steepest-Ascent Hill Climbing  —  Local Search")
         self.algo_combo.addItem("Stochastic Hill Climbing  —  Local Search")
@@ -491,38 +492,42 @@ class MainWindow(QMainWindow):
             self.lbl_cost_title.setText("f = g + h")
             self.lbl_limit_title.setText("Ngưỡng f_limit")
         elif idx == 2:
+            self.algo_desc.setText("Greedy Best-First Search: duyệt dựa trên giá trị heuristic h(n) (khoảng cách Manhattan) nhỏ nhất")
+            self.frontier_label.setText("<span style='color:#38BDF8;'>■</span> FRONTIER  (priority queue — min-heap theo heuristic h)")
+            self.lbl_cost_title.setText("Heuristic h")
+        elif idx == 3:
             self.algo_desc.setText("Simple Hill Climbing: di chuyển tới trạng thái lân cận tốt hơn đầu tiên dựa trên khoảng cách Manhattan")
             self.frontier_label.setText("<span style='color:#38BDF8;'>■</span> LÂN CẬN  (các trạng thái lân cận đang được đánh giá)")
             self.lbl_cost_title.setText("Heuristic h")
-        elif idx == 3:
+        elif idx == 4:
             self.algo_desc.setText("Steepest-Ascent Hill Climbing: di chuyển tới trạng thái lân cận tốt nhất (heuristic tối ưu nhất)")
             self.frontier_label.setText("<span style='color:#38BDF8;'>■</span> LÂN CẬN  (các trạng thái lân cận đang được đánh giá)")
             self.lbl_cost_title.setText("Heuristic h")
-        elif idx == 4:
+        elif idx == 5:
             self.algo_desc.setText("Stochastic Hill Climbing: di chuyển tới một trạng thái lân cận tốt hơn ngẫu nhiên dựa trên khoảng cách Manhattan")
             self.frontier_label.setText("<span style='color:#38BDF8;'>■</span> LÂN CẬN  (các trạng thái lân cận đang được đánh giá)")
             self.lbl_cost_title.setText("Heuristic h")
-        elif idx == 5:
+        elif idx == 6:
             self.algo_desc.setText("Random Restart Hill Climbing: leo đồi dốc nhất, tự động khởi động lại từ trạng thái ngẫu nhiên solvable nếu kẹt")
             self.frontier_label.setText("<span style='color:#38BDF8;'>■</span> LÂN CẬN  (các trạng thái lân cận đang được đánh giá)")
             self.lbl_cost_title.setText("Heuristic h")
             self.lbl_limit_title.setText("Số lần restart")
-        elif idx == 6:
+        elif idx == 7:
             self.algo_desc.setText("Local Beam Search: duy trì k=4 trạng thái tốt nhất ở mỗi bước, mở rộng tất cả và chọn k trạng thái tốt nhất tiếp theo")
             self.frontier_label.setText("<span style='color:#38BDF8;'>■</span> LÂN CẬN  (các trạng thái lân cận đang được đánh giá)")
             self.lbl_cost_title.setText("Heuristic h")
             self.lbl_limit_title.setText("Số lượng beam (k)")
-        elif idx == 7:
+        elif idx == 8:
             self.algo_desc.setText("Cost = số ô sai vị trí (misplaced tiles)")
             self.frontier_label.setText("<span style='color:#38BDF8;'>■</span> FRONTIER  (priority queue — min-heap theo cost)")
             self.lbl_cost_title.setText("Cost")
-        elif idx == 8:
+        elif idx == 9:
             self.algo_desc.setText("Lặp DFS có giới hạn độ sâu từ 0 → ∞ (LIFO stack)")
             self.frontier_label.setText("<span style='color:#38BDF8;'>■</span> FRONTIER  (LIFO stack — đỉnh stack sẽ pop tiếp)")
             self.lbl_cost_title.setText("Depth")
             self.lbl_iter_title.setText("Lần lặp (IDS)")
             self.lbl_limit_title.setText("Giới hạn độ sâu")
-        elif idx == 9:
+        elif idx == 10:
             self.algo_desc.setText("Duyệt theo chiều rộng dùng hàng đợi FIFO (queue)")
             self.frontier_label.setText("<span style='color:#38BDF8;'>■</span> FRONTIER  (FIFO queue — đầu queue sẽ pop tiếp)")
             self.lbl_cost_title.setText("—")
@@ -552,27 +557,30 @@ class MainWindow(QMainWindow):
             self.steps = idastar_steps(start, GOAL)
             algo_name = "IDA*"
         elif algo == 2:
+            self.steps = greedy_steps(start, GOAL)
+            algo_name = "Greedy Search"
+        elif algo == 3:
             self.steps = hillclimbing_steps(start, GOAL)
             algo_name = "Simple Hill Climbing"
-        elif algo == 3:
+        elif algo == 4:
             self.steps = steepest_hillclimbing_steps(start, GOAL)
             algo_name = "Steepest-Ascent Hill Climbing"
-        elif algo == 4:
+        elif algo == 5:
             self.steps = stochastic_hillclimbing_steps(start, GOAL)
             algo_name = "Stochastic Hill Climbing"
-        elif algo == 5:
+        elif algo == 6:
             self.steps = random_restart_hillclimbing_steps(start, GOAL)
             algo_name = "Random Restart Hill Climbing"
-        elif algo == 6:
+        elif algo == 7:
             self.steps = localbeam_steps(start, GOAL, k=4)
             algo_name = "Local Beam Search (k=4)"
-        elif algo == 7:
+        elif algo == 8:
             self.steps = ucs_steps(start, GOAL)
             algo_name = "UCS"
-        elif algo == 8:
+        elif algo == 9:
             self.steps = ids_steps(start, GOAL)
             algo_name = "IDS"
-        elif algo == 9:
+        elif algo == 10:
             self.steps = bfs_steps(start, GOAL)
             algo_name = "BFS"
         else:
@@ -683,9 +691,12 @@ class MainWindow(QMainWindow):
             self._add_log(idx, f"🔄 [Restart #{s['limit'] + 1}] Bị kẹt h={s['cost']} ➔ Khởi động lại", ORANGE)
         elif t == 'skip':
             if algo in (0, 1):
-                msg = f"⏭ <b>BỎ QUA (ĐĐÃ XÉT)</b>: Trạng thái đi theo hướng <b>'{via_vn}'</b> có chi phí f = <b>{s['cost']}</b> nhưng đã được duyệt qua trước đó."
+                msg = f"⏭ <b>BỎ QUA (ĐÃ XÉT)</b>: Trạng thái đi theo hướng <b>'{via_vn}'</b> có chi phí f = <b>{s['cost']}</b> nhưng đã được duyệt qua trước đó."
                 self._add_log(idx, f"⏭ Bỏ qua (đã xét): Hướng {via_vn}, chi phí f={s['cost']}", TEXT_DIM)
-            elif algo == 7:
+            elif algo == 2:
+                msg = f"⏭ <b>BỎ QUA (ĐÃ XÉT)</b>: Trạng thái đi theo hướng <b>'{via_vn}'</b> có heuristic h = <b>{s['cost']}</b> nhưng đã được duyệt qua trước đó."
+                self._add_log(idx, f"⏭ Bỏ qua (đã xét): Hướng {via_vn}, chi phí h={s['cost']}", TEXT_DIM)
+            elif algo == 8:
                 msg = f"⏭ <b>BỎ QUA (ĐÃ XÉT)</b>: Trạng thái đi theo hướng <b>'{via_vn}'</b> có chi phí g = <b>{s['cost']}</b> nhưng đã được duyệt qua trước đó."
                 self._add_log(idx, f"⏭ Bỏ qua (đã xét): Hướng {via_vn}, chi phí g={s['cost']}", TEXT_DIM)
             else:
@@ -707,41 +718,46 @@ class MainWindow(QMainWindow):
                        f"Tổng số trạng thái đã xét: <b>{s['visited_count']}</b>.")
                 self._add_log(idx, f"✅ THÀNH CÔNG! Đích có chi phí f={s['cost']} (nước đi {via_vn})", GREEN)
             elif algo == 2:
-                msg = (f"<span style='color:{GREEN};'><b>✅ ĐÃ TÌM THẤY TRẠNG THÁI ĐÍCH (Hill Climbing)!</b></span> "
+                msg = (f"<span style='color:{GREEN};'><b>✅ ĐÃ TÌM THẤY TRẠNG THÁI ĐÍCH (Greedy Search)!</b></span> "
                        f"Độ dài đường đi = {s['depth']} bước, hướng di chuyển <b>'{via_vn}'</b>. "
                        f"Tổng số trạng thái đã xét: <b>{s['visited_count']}</b>.")
                 self._add_log(idx, f"✅ THÀNH CÔNG! Đích ở độ sâu d={s['depth']} (nước đi {via_vn})", GREEN)
             elif algo == 3:
-                msg = (f"<span style='color:{GREEN};'><b>✅ ĐÃ TÌM THẤY TRẠNG THÁI ĐÍCH (Steepest-Ascent Hill Climbing)!</b></span> "
+                msg = (f"<span style='color:{GREEN};'><b>✅ ĐÃ TÌM THẤY TRẠNG THÁI ĐÍCH (Hill Climbing)!</b></span> "
                        f"Độ dài đường đi = {s['depth']} bước, hướng di chuyển <b>'{via_vn}'</b>. "
                        f"Tổng số trạng thái đã xét: <b>{s['visited_count']}</b>.")
                 self._add_log(idx, f"✅ THÀNH CÔNG! Đích ở độ sâu d={s['depth']} (nước đi {via_vn})", GREEN)
             elif algo == 4:
-                msg = (f"<span style='color:{GREEN};'><b>✅ ĐÃ TÌM THẤY TRẠNG THÁI ĐÍCH (Stochastic Hill Climbing)!</b></span> "
+                msg = (f"<span style='color:{GREEN};'><b>✅ ĐÃ TÌM THẤY TRẠNG THÁI ĐÍCH (Steepest-Ascent Hill Climbing)!</b></span> "
                        f"Độ dài đường đi = {s['depth']} bước, hướng di chuyển <b>'{via_vn}'</b>. "
                        f"Tổng số trạng thái đã xét: <b>{s['visited_count']}</b>.")
                 self._add_log(idx, f"✅ THÀNH CÔNG! Đích ở độ sâu d={s['depth']} (nước đi {via_vn})", GREEN)
             elif algo == 5:
+                msg = (f"<span style='color:{GREEN};'><b>✅ ĐÃ TÌM THẤY TRẠNG THÁI ĐÍCH (Stochastic Hill Climbing)!</b></span> "
+                       f"Độ dài đường đi = {s['depth']} bước, hướng di chuyển <b>'{via_vn}'</b>. "
+                       f"Tổng số trạng thái đã xét: <b>{s['visited_count']}</b>.")
+                self._add_log(idx, f"✅ THÀNH CÔNG! Đích ở độ sâu d={s['depth']} (nước đi {via_vn})", GREEN)
+            elif algo == 6:
                 msg = (f"<span style='color:{GREEN};'><b>✅ ĐÃ TÌM THẤY TRẠNG THÁI ĐÍCH (Random Restart Hill Climbing)!</b></span> "
                        f"Độ dài đường đi = {s['depth']} bước (ở lần khởi chạy thứ {s['limit'] + 1}), hướng di chuyển <b>'{via_vn}'</b>. "
                        f"Tổng số trạng thái đã xét qua các lần chạy: <b>{s['visited_count']}</b>.")
                 self._add_log(idx, f"✅ THÀNH CÔNG! Đích ở độ sâu d={s['depth']} (lần chạy {s['limit'] + 1})", GREEN)
-            elif algo == 6:
+            elif algo == 7:
                 msg = (f"<span style='color:{GREEN};'><b>✅ ĐÃ TÌM THẤY TRẠNG THÁI ĐÍCH (Local Beam Search)!</b></span> "
                        f"Độ dài đường đi = {s['depth']} bước, hướng di chuyển <b>'{via_vn}'</b>. "
                        f"Tổng số trạng thái đã xét: <b>{s['visited_count']}</b>.")
                 self._add_log(idx, f"✅ THÀNH CÔNG! Đích ở độ sâu d={s['depth']} (nước đi {via_vn})", GREEN)
-            elif algo == 7:
+            elif algo == 8:
                 msg = (f"<span style='color:{GREEN};'><b>✅ ĐÃ TÌM THẤY TRẠNG THÁI ĐÍCH (UCS)!</b></span> "
                        f"Chi phí tối ưu g = <b>{s['cost']}</b>, hướng di chuyển <b>'{via_vn}'</b>. "
                        f"Tổng số trạng thái đã xét: <b>{s['visited_count']}</b>.")
                 self._add_log(idx, f"✅ THÀNH CÔNG! Đích có chi phí g={s['cost']} (nước đi {via_vn})", GREEN)
-            elif algo == 8:
+            elif algo == 9:
                 msg = (f"<span style='color:{GREEN};'><b>✅ ĐÃ TÌM THẤY TRẠNG THÁI ĐÍCH (IDS)!</b></span> "
                        f"Độ sâu lời giải d = <b>{s['depth']}</b> (giới hạn l = {s['limit']}), hướng di chuyển <b>'{via_vn}'</b>. "
                        f"Tổng số trạng thái đã xét qua các vòng lặp: <b>{s['visited_count']}</b>.")
                 self._add_log(idx, f"✅ THÀNH CÔNG! Đích ở độ sâu d={s['depth']} (nước đi {via_vn})", GREEN)
-            elif algo == 9:
+            elif algo == 10:
                 msg = (f"<span style='color:{GREEN};'><b>✅ ĐÃ TÌM THẤY TRẠNG THÁI ĐÍCH (BFS)!</b></span> "
                        f"Độ sâu lời giải d = <b>{s['depth']}</b>, hướng di chuyển <b>'{via_vn}'</b>. "
                        f"Tổng số trạng thái đã xét: <b>{s['visited_count']}</b>.")
@@ -765,40 +781,45 @@ class MainWindow(QMainWindow):
                 self._add_log(idx, f"Bước {idx+1}: Mở rộng trạng thái f={s['cost']}/{s['limit']} (hướng {via_vn}) ➔ Thêm {len(s.get('added',[]))} con", TEXT)
             elif algo == 2:
                 added_str = ", ".join([f"hướng {dir_names.get(d, d)} (h={c})" for _,d,c in s.get('added',[])]) or "không có"
+                msg = (f"<b>Bước {idx+1}</b> [Greedy Search]: Lấy ra trạng thái có heuristic h = <b>{s['cost']}</b> (nước đi <b>'{via_vn}'</b>, độ sâu d = <b>{s['depth']}</b>). "
+                       f"Mở rộng thêm <b>{len(s.get('added',[]))}</b> trạng thái con vào hàng đợi ưu tiên (min-heap): {added_str}.")
+                self._add_log(idx, f"Bước {idx+1}: Mở rộng trạng thái heuristic h={s['cost']} (hướng {via_vn}) ➔ Thêm {len(s.get('added',[]))} con", TEXT)
+            elif algo == 3:
+                added_str = ", ".join([f"hướng {dir_names.get(d, d)} (h={c})" for _,d,c in s.get('added',[])]) or "không có"
                 msg = (f"<b>Bước {idx+1}</b> [Simple Hill Climbing]: Lấy ra trạng thái có chi phí h = <b>{s['cost']}</b> (nước đi <b>'{via_vn}'</b>, độ sâu d = <b>{s['depth']}</b>). "
                        f"Di chuyển sang trạng thái tốt hơn đầu tiên tìm thấy: {added_str}.")
                 self._add_log(idx, f"Bước {idx+1}: Di chuyển sang trạng thái tốt hơn (hướng {via_vn}, h={s['cost']})", TEXT)
-            elif algo == 3:
+            elif algo == 4:
                 added_str = ", ".join([f"hướng {dir_names.get(d, d)} (h={c})" for _,d,c in s.get('added',[])]) or "không có"
                 msg = (f"<b>Bước {idx+1}</b> [Steepest-Ascent Hill Climbing]: Lấy ra trạng thái có chi phí h = <b>{s['cost']}</b> (nước đi <b>'{via_vn}'</b>, độ sâu d = <b>{s['depth']}</b>). "
                        f"Di chuyển sang trạng thái tốt nhất: {added_str}.")
                 self._add_log(idx, f"Bước {idx+1}: Di chuyển sang trạng thái tốt nhất (hướng {via_vn}, h={s['cost']})", TEXT)
-            elif algo == 4:
+            elif algo == 5:
                 added_str = ", ".join([f"hướng {dir_names.get(d, d)} (h={c})" for _,d,c in s.get('added',[])]) or "không có"
                 msg = (f"<b>Bước {idx+1}</b> [Stochastic Hill Climbing]: Lấy ra trạng thái có chi phí h = <b>{s['cost']}</b> (nước đi <b>'{via_vn}'</b>, độ sâu d = <b>{s['depth']}</b>). "
                        f"Chọn ngẫu nhiên một trạng thái lân cận tốt hơn: {added_str}.")
                 self._add_log(idx, f"Bước {idx+1}: Chọn ngẫu nhiên lân cận tốt hơn (hướng {via_vn}, h={s['cost']})", TEXT)
-            elif algo == 5:
+            elif algo == 6:
                 added_str = ", ".join([f"hướng {dir_names.get(d, d)} (h={c})" for _,d,c in s.get('added',[])]) or "không có"
                 msg = (f"<b>Bước {idx+1}</b> [Random Restart Hill Climbing, Restart lần {s['limit'] + 1}]: Lấy ra trạng thái có chi phí h = <b>{s['cost']}</b> (nước đi <b>'{via_vn}'</b>, độ sâu d = <b>{s['depth']}</b>). "
                        f"Di chuyển sang trạng thái tốt nhất: {added_str}.")
                 self._add_log(idx, f"Bước {idx+1}: Di chuyển sang tốt nhất (hướng {via_vn}, h={s['cost']}, restart #{s['limit'] + 1})", TEXT)
-            elif algo == 6:
+            elif algo == 7:
                 added_str = ", ".join([f"hướng {dir_names.get(d, d)} (h={c})" for _,d,c in s.get('added',[])]) or "không có"
                 msg = (f"<b>Bước {idx+1}</b> [Local Beam Search]: Lấy ra trạng thái có chi phí h = <b>{s['cost']}</b> (nước đi <b>'{via_vn}'</b>, độ sâu d = <b>{s['depth']}</b>). "
                        f"Giữ lại k=<b>{s['limit']}</b> trạng thái lân cận tốt nhất: {added_str}.")
                 self._add_log(idx, f"Bước {idx+1}: Giữ lại {s['limit']} trạng thái lân cận tốt nhất (từ h={s['cost']})", TEXT)
-            elif algo == 7:
+            elif algo == 8:
                 added_str = ", ".join([f"hướng {dir_names.get(d, d)} (chi phí g={c})" for _,d,c in s.get('added',[])]) or "không có"
                 msg = (f"<b>Bước {idx+1}</b> [UCS]: Lấy ra trạng thái có chi phí g = <b>{s['cost']}</b> (nước đi <b>'{via_vn}'</b>). "
                        f"Mở rộng thêm <b>{len(s.get('added',[]))}</b> trạng thái con vào hàng đợi ưu tiên (min-heap): {added_str}.")
                 self._add_log(idx, f"Bước {idx+1}: Mở rộng trạng thái chi phí g={s['cost']} (hướng {via_vn}) ➔ Thêm {len(s.get('added',[]))} con", TEXT)
-            elif algo == 8:
+            elif algo == 9:
                 added_str = ", ".join([f"hướng {dir_names.get(d, d)} (độ sâu d={c})" for _,d,c in s.get('added',[])]) or "không có"
                 msg = (f"<b>Bước {idx+1}</b> [IDS, giới hạn l={s['limit']}]: Lấy ra trạng thái ở độ sâu d = <b>{s['depth']}</b> (nước đi <b>'{via_vn}'</b>). "
                        f"Mở rộng thêm <b>{len(s.get('added',[]))}</b> trạng thái con vào ngăn xếp (stack): {added_str}.")
                 self._add_log(idx, f"Bước {idx+1}: Mở rộng độ sâu d={s['depth']}/{s['limit']} (hướng {via_vn}) ➔ Thêm {len(s.get('added',[]))} con", TEXT)
-            elif algo == 9:
+            elif algo == 10:
                 added_str = ", ".join([f"hướng {dir_names.get(d, d)} (độ sâu d={c})" for _,d,c in s.get('added',[])]) or "không có"
                 msg = (f"<b>Bước {idx+1}</b> [BFS]: Lấy ra trạng thái đầu hàng đợi (nước đi <b>'{via_vn}'</b>, độ sâu d = <b>{s['depth']}</b>). "
                        f"Mở rộng thêm <b>{len(s.get('added',[]))}</b> trạng thái con vào hàng đợi (queue): {added_str}.")
@@ -811,8 +832,8 @@ class MainWindow(QMainWindow):
 
         self.info_box.setText(msg)
         self._update_stats(
-            idx+1, s['cost'] if algo in (0, 1, 2, 3, 4, 5, 6, 7) else (s['depth'] if algo == 8 else None), s['visited_count'], s['frontier_count'],
-            s.get('iteration') if algo == 8 else None, s.get('limit'),
+            idx+1, s['cost'] if algo in (0, 1, 2, 3, 4, 5, 6, 7, 8) else (s['depth'] if algo == 9 else None), s['visited_count'], s['frontier_count'],
+            s.get('iteration') if algo == 9 else None, s.get('limit'),
             s.get('g') if algo in (0, 1) else None,
             s.get('h') if algo in (0, 1) else None
         )
@@ -837,18 +858,20 @@ class MainWindow(QMainWindow):
 
         dir_names = {'↑': 'Lên ↑', '↓': 'Xuống ↓', '←': 'Trái ←', '→': 'Phải →', 'start': 'Bắt đầu'}
 
-        if algo in (0, 1, 2, 3, 4, 5, 6, 7):
+        if algo in (0, 1, 2, 3, 4, 5, 6, 7, 8):
             if algo == 1:
                 hdr = QLabel(f"📚 {total_count} trạng thái (IDA* LIFO stack — đỉnh stack sẽ pop tiếp):")
             elif algo == 2:
-                hdr = QLabel(f"📋 {total_count} trạng thái lân cận (di chuyển sang trạng thái tốt hơn đầu tiên):")
+                hdr = QLabel(f"📋 {total_count} trạng thái (Greedy Search min-heap theo heuristic h — pop tiếp):")
             elif algo == 3:
-                hdr = QLabel(f"📋 {total_count} trạng thái lân cận (được sắp xếp, di chuyển sang tốt nhất):")
+                hdr = QLabel(f"📋 {total_count} trạng thái lân cận (di chuyển sang trạng thái tốt hơn đầu tiên):")
             elif algo == 4:
-                hdr = QLabel(f"📋 {total_count} trạng thái lân cận (chọn ngẫu nhiên một trạng thái tốt hơn):")
+                hdr = QLabel(f"📋 {total_count} trạng thái lân cận (được sắp xếp, di chuyển sang tốt nhất):")
             elif algo == 5:
-                hdr = QLabel(f"📋 {total_count} trạng thái lân cận (di chuyển sang tốt nhất - restart nếu kẹt):")
+                hdr = QLabel(f"📋 {total_count} trạng thái lân cận (chọn ngẫu nhiên một trạng thái tốt hơn):")
             elif algo == 6:
+                hdr = QLabel(f"📋 {total_count} trạng thái lân cận (di chuyển sang tốt nhất - restart nếu kẹt):")
+            elif algo == 7:
                 hdr = QLabel(f"📋 {total_count} trạng thái lân cận (giữ lại k={4} trạng thái tốt nhất ở thế hệ kế tiếp):")
             else:
                 hdr = QLabel(f"📋 {total_count} trạng thái (↑ chi phí thấp nhất = pop tiếp):")
@@ -861,7 +884,7 @@ class MainWindow(QMainWindow):
                 d = item['via']
                 if algo in (0, 1):
                     label_bot_text = f"f: {cost}={item['g']}+{item['h']}"
-                elif algo in (2, 3, 4, 5, 6):
+                elif algo in (2, 3, 4, 5, 6, 7):
                     label_bot_text = f"h = {cost}"
                 else:
                     label_bot_text = f"g = {cost}"
@@ -870,14 +893,14 @@ class MainWindow(QMainWindow):
                     border_col=ACCENT if rank==0 else BORDER,
                     bg_col="#151B2E" if rank==0 else BG2,
                     tag_col=ACCENT2 if rank==0 else TEXT_DIM,
-                    tag_txt="▲ pop tiếp" if rank==0 and algo not in (2, 3, 4, 5, 6) else ("▲ chọn" if rank<4 and algo==6 else ("▲ chọn" if rank==0 and algo in (2, 3, 4, 5) else "")))
+                    tag_txt="▲ pop tiếp" if rank==0 and algo not in (3, 4, 5, 6, 7) else ("▲ chọn" if rank<4 and algo==7 else ("▲ chọn" if rank==0 and algo in (3, 4, 5, 6) else "")))
                 batch.append(mini)
                 if len(batch)==2: self._add_mini_row(self.frontier_layout, batch); batch=[]
             if batch: self._add_mini_row(self.frontier_layout, batch)
             if total_count > 16:
                 self.frontier_layout.addWidget(self._more_lbl(total_count - 16))
-        elif algo in (8, 10):
-            algo_type = "IDS LIFO stack" if algo == 8 else "DFS LIFO stack"
+        elif algo in (9, 11):
+            algo_type = "IDS LIFO stack" if algo == 9 else "DFS LIFO stack"
             hdr = QLabel(f"📚 {total_count} trạng thái ({algo_type} — đỉnh stack sẽ pop tiếp):")
             hdr.setStyleSheet(f"color:{TEXT_DIM};font-size:11px;")
             self.frontier_layout.addWidget(hdr)
@@ -940,9 +963,9 @@ class MainWindow(QMainWindow):
                 g = item[3]
                 h = item[4]
                 lbl_bot = f"f: {cost_or_depth}={g}+{h}"
-            elif algo in (2, 3, 4, 5, 6):
+            elif algo in (2, 3, 4, 5, 6, 7):
                 lbl_bot = f"h = {cost_or_depth}"
-            elif algo == 7:
+            elif algo == 8:
                 lbl_bot = f"Chi phí: {cost_or_depth}"
             else:
                 lbl_bot = f"Độ sâu: {cost_or_depth}"

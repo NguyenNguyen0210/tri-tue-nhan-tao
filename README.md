@@ -77,10 +77,17 @@ Tương tự tìm kiếm không có thông tin, nhưng nhóm thuật toán này 
 - **Heuristic Misplaced Tiles:** Số lượng ô nằm sai vị trí so với trạng thái đích.
 
 **Các thuật toán Tìm kiếm có thông tin đã triển khai:**
+- **Greedy Best-First Search (Greedy Search):** Mở rộng node chỉ dựa trên giá trị ước lượng heuristic $h(n)$ (khoảng cách Manhattan) từ trạng thái hiện tại đến đích.
 - **A\* Search (A-Star):** Mở rộng node dựa trên tổng chi phí đánh giá $f(n) = g(n) + h(n)$ (trong đó $g(n)$ là chi phí thực tế từ trạng thái ban đầu, và $h(n)$ là ước lượng heuristic đến đích).
 - **IDA\* Search (Iterative Deepening A\*):** Kết hợp A\* với cơ chế duyệt sâu dần dựa trên ngưỡng chi phí $f(n)$.
 
 **Ưu điểm, Nhược điểm và Hiệu suất:**
+
+* **Greedy Best-First Search:**
+  Greedy Best-First Search đánh giá các nút chỉ dựa trên giá trị heuristic $h(n)$ (khoảng cách Manhattan) từ trạng thái hiện tại đến trạng thái đích.
+  - *Cấu trúc dữ liệu:* Hàng đợi ưu tiên **Min-Heap** (`heapq`) sắp xếp theo $h(n)$.
+  - *Ưu điểm:* Thường tìm thấy lời giải rất nhanh trong thực tế vì luôn mở rộng trạng thái ước lượng gần đích nhất.
+  - *Nhược điểm:* Không đảm bảo tính tối ưu (đường đi thường dài hơn nhiều so với A*) và không đảm bảo tính đầy đủ trên không gian vô hạn (tuy nhiên ứng dụng đã có tập đóng `visited` để ngăn chặn vòng lặp vô hạn).
 
 * **A\* Search:**
   A\* đánh giá node bằng hàm $f(n) = g(n) + h(n)$ với $g(n)$ tính theo khoảng cách Manhattan và $h(n)$ theo misplaced tiles.

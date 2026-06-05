@@ -1,5 +1,6 @@
 from .astar import astar_steps
 from .idastar import idastar_steps
+from .greedy import greedy_steps
 from .hillclimbing import hillclimbing_steps
 from .steepesthillclimbing import steepest_hillclimbing_steps
 from .stochastichillclimbing import stochastic_hillclimbing_steps
@@ -14,6 +15,7 @@ from .utils import misplaced, manhattan, get_neighbors
 __all__ = [
     'astar_steps',
     'idastar_steps',
+    'greedy_steps',
     'hillclimbing_steps',
     'steepest_hillclimbing_steps',
     'stochastic_hillclimbing_steps',
