@@ -1,5 +1,5 @@
 import heapq
-from ..utils import misplaced, get_neighbors
+from algorithms.utils import misplaced, get_neighbors
 
 def ucs_steps(start, goal):
     counter = 0

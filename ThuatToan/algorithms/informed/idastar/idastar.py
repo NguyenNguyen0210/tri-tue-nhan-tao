@@ -1,5 +1,5 @@
 import heapq
-from ..utils import misplaced, manhattan, get_neighbors
+from algorithms.utils import misplaced, manhattan, get_neighbors
 
 def idastar_steps(start, goal):
     steps = []

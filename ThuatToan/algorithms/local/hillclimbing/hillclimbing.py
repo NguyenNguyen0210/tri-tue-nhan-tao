@@ -1,6 +1,6 @@
-from ..utils import misplaced, manhattan, get_neighbors
+from algorithms.utils import misplaced, manhattan, get_neighbors
 
-def steepest_hillclimbing_steps(start, goal):
+def hillclimbing_steps(start, goal):
     steps = []
     MAX_STEPS = 3000
 
@@ -37,21 +37,20 @@ def steepest_hillclimbing_steps(start, goal):
             break
 
         nbrs = get_neighbors(current_state)
-        
-        # Evaluate all neighbors to find the best one
-        best_neighbor = None
-        best_d = None
-        best_h = float('inf')
+        better_neighbor = None
+        better_d = None
+        better_h = None
 
+        # Simple Hill Climbing: find the FIRST neighbor strictly better than current
         for nb, d in nbrs:
             nb_h = manhattan(nb)
-            if nb_h < best_h:
-                best_h = nb_h
-                best_neighbor = nb
-                best_d = d
+            if nb_h < h_curr:
+                better_neighbor = nb
+                better_d = d
+                better_h = nb_h
+                break
 
-        # Sort neighbors by heuristic value ascending for frontier rendering
-        sorted_nbrs = sorted(nbrs, key=lambda x: manhattan(x[0]))
+        # Render frontier and explored lists
         frontier_render = [
             {
                 'state': nb,
@@ -60,7 +59,7 @@ def steepest_hillclimbing_steps(start, goal):
                 'h': None,
                 'via': d
             }
-            for nb, d in sorted_nbrs
+            for nb, d in nbrs
         ]
         explored_render = [
             (exp_node[0], exp_node[1], exp_node[2][-1] if exp_node[2] else 'start')
@@ -86,8 +85,8 @@ def steepest_hillclimbing_steps(start, goal):
             })
             break
 
-        # Steepest-Ascent: move if the best neighbor is strictly better than current
-        if best_neighbor is not None and best_h < h_curr:
+        if better_neighbor is not None:
+            # We found a strictly better neighbor
             steps.append({
                 'type': 'expand',
                 'state': current_state,
@@ -95,7 +94,7 @@ def steepest_hillclimbing_steps(start, goal):
                 'moves': current_moves,
                 'path': current_path,
                 'neighbors': nbrs,
-                'added': [(best_neighbor, best_d, best_h)],
+                'added': [(better_neighbor, better_d, better_h)],
                 'frontier': frontier_render,
                 'frontier_count': len(nbrs),
                 'visited_count': len(explored_global),
@@ -106,9 +105,9 @@ def steepest_hillclimbing_steps(start, goal):
             })
             
             explored_global.append((current_state, h_curr, current_moves))
-            current_state = best_neighbor
-            current_moves = current_moves + [best_d]
-            current_path = current_path + [best_neighbor]
+            current_state = better_neighbor
+            current_moves = current_moves + [better_d]
+            current_path = current_path + [better_neighbor]
         else:
             # stuck in local optimum/plateau
             steps.append({

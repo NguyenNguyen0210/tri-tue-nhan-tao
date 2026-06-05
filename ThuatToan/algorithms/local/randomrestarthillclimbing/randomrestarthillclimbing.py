@@ -1,5 +1,5 @@
 import random
-from ..utils import manhattan, get_neighbors
+from algorithms.utils import manhattan, get_neighbors
 
 def is_solvable(state):
     arr = [x for x in state if x != 0]

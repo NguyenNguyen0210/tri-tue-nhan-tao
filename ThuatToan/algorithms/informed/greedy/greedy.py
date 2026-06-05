@@ -1,5 +1,5 @@
 import heapq
-from ..utils import manhattan, get_neighbors
+from algorithms.utils import manhattan, get_neighbors
 
 def greedy_steps(start, goal):
     counter = 0

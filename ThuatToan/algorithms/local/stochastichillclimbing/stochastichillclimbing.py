@@ -1,5 +1,5 @@
 import random
-from ..utils import manhattan, get_neighbors
+from algorithms.utils import manhattan, get_neighbors
 
 def stochastic_hillclimbing_steps(start, goal):
     steps = []

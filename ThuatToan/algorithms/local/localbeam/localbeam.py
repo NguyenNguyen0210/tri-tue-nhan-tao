@@ -1,5 +1,5 @@
 import random
-from ..utils import manhattan, get_neighbors
+from algorithms.utils import manhattan, get_neighbors
 
 def localbeam_steps(start, goal, k=4):
     steps = []

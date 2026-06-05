@@ -1,4 +1,4 @@
-from ..utils import get_neighbors
+from algorithms.utils import get_neighbors
 
 def ids_steps(start, goal):
     steps = []
