@@ -1,151 +1,183 @@
-# 🧩 8-Puzzle Solver & Visualizer
+# tri-tue-nhan-tao
 
-Đây là bài tập thực hành môn **Trí tuệ nhân tạo**.
-* **Sinh viên thực hiện**: Nguyễn Nguyên
-* **Mã số sinh viên**: 24110289
-* **Giảng viên hướng dẫn**: Cô Phan Thị Huyền Trang
+# Báo cáo Đồ án Cá nhân Trí tuệ Nhân tạo
+
+## Đề tài: Giải bài toán 8-Puzzle bằng các thuật toán tìm kiếm
+
+Giảng viên hướng dẫn: Cô Phan Thị Huyền Trang
+
+Sinh viên thực hiện: Nguyễn Nguyên - 24110289
+
+Ngày báo cáo: Tháng 06 năm 2026
+
+## 1. Mục tiêu
+Mục tiêu của dự án này là xây dựng một ứng dụng mô phỏng việc giải trò chơi 8-Puzzle bằng cách áp dụng và trực quan hóa hiệu quả của các thuật toán tìm kiếm khác nhau trong Trí tuệ Nhân tạo. Ứng dụng cung cấp giao diện đồ họa trực quan (PyQt5) để người dùng nhập trạng thái ban đầu và trạng thái đích, chọn thuật toán, xem quá trình giải từng bước, theo dõi biên tìm kiếm (frontier) / danh sách đã duyệt (explored), và so sánh hiệu suất giữa các thuật toán thông qua các chỉ số thống kê thời gian thực.
+
+## 2. Nội dung
+### 2.1. Các thuật toán Tìm kiếm không có thông tin (Uninformed Search)
+**Khái niệm bài toán tìm kiếm và lời giải:**
+Trong bối cảnh trò chơi 8-Puzzle, bài toán tìm kiếm được định nghĩa như sau:
+
+- **Trạng thái (State):** Một cấu hình cụ thể của bảng 3x3, biểu diễn vị trí của 8 ô số (từ 1 đến 8) và ô trống (ký hiệu là 0). Ví dụ: `((1, 2, 3), (4, 0, 5), (6, 7, 8))`.
+- **Hành động (Action):** Các di chuyển hợp lệ của ô trống: Lên (Up), Xuống (Down), Trái (Left), Phải (Right).
+- **Môi trường (Environment):** Tập hợp tất cả các trạng thái có thể đạt được từ trạng thái ban đầu bằng cách áp dụng các hành động hợp lệ.
+- **Trạng thái ban đầu (Initial State):** Cấu hình bắt đầu của bảng 8-Puzzle do người dùng tự nhập hoặc được tạo ngẫu nhiên.
+- **Trạng thái đích (Goal State):** Cấu hình mong muốn của bảng 8-Puzzle (thường là các số được sắp xếp theo thứ tự từ 1 đến 8 và ô trống ở cuối hoặc ở giữa tùy cấu hình).
+- **Chi phí bước đi (Step Cost):** Chi phí để thực hiện một hành động (thường mặc định là 1 cho mỗi bước di chuyển).
+- **Lời giải (Solution):** Một chuỗi các hành động di chuyển từ trạng thái ban đầu dẫn đến trạng thái đích. Lời giải tối ưu là lời giải có tổng chi phí bước đi thấp nhất (tức chuỗi di chuyển ngắn nhất).
+
+**Các thuật toán Tìm kiếm không có thông tin đã triển khai:**
+Nhóm thuật toán này tìm kiếm lời giải mà không sử dụng bất kỳ thông tin bổ trợ nào về "độ gần" hay ước lượng khoảng cách từ trạng thái hiện tại đến trạng thái đích. Chúng duyệt không gian trạng thái một cách hệ thống dựa trên cấu trúc cây tìm kiếm. Các thuật toán được triển khai bao gồm:
+
+- **BFS (Breadth-First Search):** Tìm kiếm theo chiều rộng.
+- **DFS (Depth-First Search):** Tìm kiếm theo chiều sâu.
+- **UCS (Uniform-Cost Search):** Tìm kiếm chi phí đồng nhất.
+- **IDS (Iterative Deepening Search):** Tìm kiếm sâu dần.
+
+**Ưu điểm, Nhược điểm và Hiệu suất:**
+
+* **BFS (Breadth-First Search):**
+  BFS khám phá không gian tìm kiếm theo từng lớp, mở rộng tất cả các node ở độ sâu $k$ trước khi chuyển sang độ sâu $k+1$.
+  - *Cấu trúc dữ liệu:* Sử dụng hàng đợi **FIFO (First-In-First-Out)** qua `collections.deque` làm biên tìm kiếm (`frontier`).
+  - *Ưu điểm:* Đảm bảo tính đầy đủ (completeness) và tính tối ưu (optimality) - luôn tìm ra lời giải ngắn nhất khi chi phí bước đi bằng nhau.
+  - *Nhược điểm:* Yêu cầu lượng bộ nhớ rất lớn $O(b^d)$ để lưu trữ biên tìm kiếm và các trạng thái đã xét, dễ gây tràn bộ nhớ khi độ sâu lớn.
+
+* **DFS (Depth-First Search):**
+  DFS khám phá không gian tìm kiếm theo nhánh sâu nhất có thể trước khi thực hiện quay lui (backtracking).
+  - *Cấu trúc dữ liệu:* Sử dụng ngăn xếp **LIFO (Last-In-First-Out)** qua danh sách Python (`pop()`).
+  - *Ưu điểm:* Tiết kiệm bộ nhớ hơn BFS rất nhiều, độ phức tạp không gian chỉ là tuyến tính $O(b \cdot m)$ theo độ sâu.
+  - *Nhược điểm:* Không đảm bảo tính đầy đủ trên không gian vô hạn (ứng dụng giới hạn tối đa 3000 bước để tránh lặp vô hạn) và không đảm bảo tối ưu (đường đi thường rất dài).
+
+* **UCS (Uniform-Cost Search):**
+  UCS mở rộng các nút dựa trên tổng chi phí từ trạng thái ban đầu đến trạng thái hiện tại.
+  - *Cấu trúc dữ liệu:* Hàng đợi ưu tiên **Min-Heap** thông qua `heapq`.
+  - *Đặc điểm trong mã nguồn:* Trong chương trình này, UCS được cấu hình đặc biệt sử dụng hàm Heuristic **Misplaced Tiles** làm độ ưu tiên để sắp xếp trong Min-Heap, hoạt động tương đương với **Greedy Best-First Search**.
+  - *Ưu điểm:* Ưu tiên mở rộng trạng thái có ít ô sai lệch nhất trước để tiến nhanh đến đích.
+  - *Nhược điểm:* Với cấu hình heuristic này, thuật toán không đảm bảo tính tối ưu (đường đi ngắn nhất).
+
+* **IDS (Iterative Deepening Search):**
+  IDS kết hợp ưu thế bộ nhớ của DFS và tính tối ưu của BFS bằng cách thực hiện tìm kiếm giới hạn độ sâu (DLS) lặp lại với giới hạn tăng dần từ 0, 1, 2...
+  - *Cơ chế chống lặp:* Thực hiện kiểm tra chu trình trên nhánh hiện tại (`is_cycle = state in path[:-1]`).
+  - *Ưu điểm:* Đầy đủ và tối ưu giống BFS, nhưng bộ nhớ cực thấp chỉ $O(b \cdot d)$.
+  - *Nhược điểm:* Trùng lặp việc mở rộng các node ở độ sâu nông nhiều lần, tốn thời gian chạy hơn BFS một chút.
 
 ---
 
-Ứng dụng trực quan hóa các thuật toán tìm kiếm trí tuệ nhân tạo (AI Search Algorithms) giải bài toán 8-Puzzle, được xây dựng trên ngôn ngữ **Python** và thư viện đồ họa **PyQt5**.
+### 2.2. Các thuật toán Tìm kiếm có thông tin (Informed Search)
+**Khái niệm bài toán tìm kiếm và lời giải:**
+Tương tự tìm kiếm không có thông tin, nhưng nhóm thuật toán này sử dụng thêm hàm heuristic $h(n)$ để ước lượng chi phí còn lại từ trạng thái hiện tại đến đích. Hàm này định hướng tìm kiếm thông minh hơn. Dự án triển khai hai heuristic chính:
+- **Heuristic Manhattan Distance:** Tổng khoảng cách di chuyển tối thiểu theo lưới của các ô số đến vị trí đích của chúng.
+- **Heuristic Misplaced Tiles:** Số lượng ô nằm sai vị trí so với trạng thái đích.
+
+**Các thuật toán Tìm kiếm có thông tin đã triển khai:**
+- **A\* Search (A-Star):** Mở rộng node dựa trên tổng chi phí đánh giá $f(n) = g(n) + h(n)$ (trong đó $g(n)$ là chi phí thực tế từ trạng thái ban đầu, và $h(n)$ là ước lượng heuristic đến đích).
+- **IDA\* Search (Iterative Deepening A\*):** Kết hợp A\* với cơ chế duyệt sâu dần dựa trên ngưỡng chi phí $f(n)$.
+
+**Ưu điểm, Nhược điểm và Hiệu suất:**
+
+* **A\* Search:**
+  A\* đánh giá node bằng hàm $f(n) = g(n) + h(n)$ với $g(n)$ tính theo khoảng cách Manhattan và $h(n)$ theo misplaced tiles.
+  - *Cấu trúc dữ liệu:* Hàng đợi ưu tiên **Min-Heap** (`heapq`).
+  - *Ưu điểm:* Hoàn chỉnh và tối ưu (nếu heuristic chấp nhận được). Cực kỳ hiệu quả, duyệt ít node hơn rất nhiều so với BFS/UCS.
+  - *Nhược điểm:* Yêu cầu bộ nhớ lớn để lưu trữ frontier và tập đã duyệt, có thể cạn kiệt tài nguyên trong các bài toán cực kỳ phức tạp.
+
+* **IDA\* Search:**
+  IDA\* duyệt DFS với giới hạn ngưỡng chi phí $f$. Khi một chu kỳ tìm kiếm kết thúc mà chưa gặp đích, ngưỡng mới sẽ là giá trị $f$ nhỏ nhất vượt quá ngưỡng cũ.
+  - *Ưu điểm:* Đảm bảo tối ưu và đầy đủ giống A\* nhưng khắc phục triệt để điểm yếu bộ nhớ bằng cách chỉ lưu trữ nhánh duyệt hiện tại (độ phức tạp bộ nhớ tuyến tính $O(d)$).
+  - *Nhược điểm:* Có thể lặp lại việc duyệt một số node ở các vòng lặp trước, tăng thời gian tính toán CPU.
 
 ---
 
-## 🚀 Hướng dẫn khởi chạy nhanh
+### 2.3. Các thuật toán Tìm kiếm cục bộ (Local Search)
+**Khái niệm bài toán tìm kiếm và lời giải:**
+Tìm kiếm cục bộ chỉ hoạt động trên trạng thái hiện tại và các trạng thái lân cận của nó thay vì xây dựng cây tìm kiếm lớn. Lời giải thu được là trạng thái đích tìm thấy, đường đi là chuỗi các bước di chuyển cục bộ kế tiếp nhau. Hàm heuristic chính được sử dụng để đánh giá độ tốt của trạng thái là khoảng cách Manhattan.
 
-### 1. Cài đặt thư viện cần thiết
-Đảm bảo bạn đã cài đặt Python và thư viện PyQt5:
+**Các thuật toán Tìm kiếm cục bộ đã triển khai:**
+- **Simple Hill Climbing:** Di chuyển đến trạng thái lân cận đầu tiên tốt hơn trạng thái hiện tại.
+- **Steepest-Ascent Hill Climbing:** Đánh giá toàn bộ lân cận và di chuyển đến trạng thái tốt nhất.
+- **Stochastic Hill Climbing:** Chọn ngẫu nhiên một trạng thái từ tập hợp các lân cận tốt hơn.
+- **Random Restart Hill Climbing:** Khởi động lại thuật toán leo đồi từ một trạng thái ngẫu nhiên mới nếu bị kẹt ở cực trị cục bộ.
+- **Local Beam Search (k = 4):** Duy trì và mở rộng song song tập hợp $k$ trạng thái tốt nhất.
+
+**Ưu điểm, Nhược điểm và Hiệu suất:**
+
+* **Simple Hill Climbing:**
+  - *Ưu điểm:* Cực kỳ tiết kiệm bộ nhớ $O(1)$ và dễ cài đặt.
+  - *Nhược điểm:* Rất dễ bị kẹt tại cực trị địa phương (local optimum) hoặc cao nguyên (plateau), nơi không có lân cận nào tốt hơn trạng thái hiện tại. Khi kẹt, giao diện hiển thị biểu tượng `⛰️`.
+
+* **Steepest-Ascent Hill Climbing:**
+  - *Ưu điểm:* Bộ nhớ tối ưu $O(1)$, tiếp cận đích nhanh hơn Simple Hill Climbing cục bộ vì luôn chọn hướng có độ dốc cao nhất.
+  - *Nhược điểm:* Vẫn dễ bị kẹt tại cực trị địa phương/cao nguyên. Việc đánh giá toàn bộ lân cận tại mỗi bước tốn thời gian hơn Simple Hill Climbing.
+
+* **Stochastic Hill Climbing:**
+  - *Ưu điểm:* Bộ nhớ tối ưu $O(1)$, yếu tố ngẫu nhiên giúp có cơ hội vượt qua một số cao nguyên phẳng hoặc tránh rơi vào cùng một cực trị cố định.
+  - *Nhược điểm:* Vẫn có tỷ lệ kẹt cao, không đảm bảo tìm thấy lời giải tối ưu. Các lần chạy khác nhau cho kết quả khác nhau.
+
+* **Random Restart Hill Climbing:**
+  - *Ưu điểm:* Độ tin cậy cực cao, gần như chắc chắn tìm thấy đích (xấp xỉ 100%) nhờ cơ chế tự động khởi động lại từ các trạng thái solvable ngẫu nhiên mới khi bị kẹt.
+  - *Nhược điểm:* Đường đi không bắt nguồn từ trạng thái ban đầu mà là từ trạng thái random thành công cuối cùng đến đích. Các lần kẹt trước được ghi lại dưới dạng bước chuyển đổi `🔄 KHỞI ĐỘNG LẠI` trong lịch sử trực quan hóa.
+
+* **Local Beam Search (k = 4):**
+  Duy trì $k$ trạng thái. Ở mỗi bước, sinh ra tất cả lân cận của cả $k$ trạng thái này, sau đó chọn lại $k$ trạng thái tốt nhất.
+  - *Ưu điểm:* Khám phá song song hiệu quả, chia sẻ thông tin giữa các nhánh để cắt tỉa các hướng đi xấu nhanh chóng. Ít bị kẹt hơn leo đồi thông thường và tiết kiệm bộ nhớ hơn A\*.
+  - *Nhược điểm:* Không đảm bảo tối ưu, kết quả phụ thuộc vào tham số độ rộng chùm $k$.
+
+---
+
+## 3. Giao diện & Hướng dẫn khởi chạy
+
+### 3.1. Giao diện ứng dụng
+Ứng dụng được thiết kế trực quan sinh động bằng **PyQt5**:
+- **Midnight Navy Theme:** Chủ đề giao diện tối hiện đại, tinh tế, giảm mỏi mắt và phân định rõ ràng các vùng chức năng.
+- **Glow Gradients:** Các ô số trên bàn cờ có hiệu ứng chuyển màu và đổ bóng nổi 3D (Xanh Emerald cho ô đúng vị trí, Đỏ Crimson cho ô sai vị trí, và Indigo cho ô vừa di chuyển).
+- **Metric Cards (Bảng Thống kê):** Cập nhật liên tục các thông số như Pop/Step, Cost ($f = g + h$), số trạng thái đã duyệt và kích thước biên tìm kiếm (Frontier Size).
+- **Bàn cờ phụ (Frontier & Explored):** Hiển thị trực quan danh sách các trạng thái kề sắp duyệt và các trạng thái đã xét dưới dạng panel thu gọn ở góc phải.
+
+#### Một số hình ảnh giao diện ứng dụng:
+*(Các hình ảnh chụp màn hình thực tế được lưu trữ trong thư mục [image](file:///c:/Users/Nguyen Nguyen/OneDrive/Desktop/AI LAB/image))*
+
+- **Giao diện chính chạy thuật toán:**
+  ![Giao diện 1](image/z7891675269158_b310246b78f2869ebb657b5793514925.jpg)
+  ![Giao diện 2](image/z7891675280650_83f164d2753329d34a619d3e1b76dcfe.jpg)
+  ![Giao diện 3](image/z7891675285600_7355e004071c261abea1537f777ab04f.jpg)
+  ![Giao diện 4](image/z7891675310722_fc3a2f3ade2ab6ab61e6c89d6e0806ea.jpg)
+  ![Giao diện 5](image/z7891675324858_3fb4ddd075b29221cb41ece264078a40.jpg)
+  ![Giao diện 6](image/z7891675325631_f8d02f738270adf3a4e416512542b5f4.jpg)
+  ![Giao diện 7](image/z7891675351171_f3e92cb4211254f865584f8eb4522da1.jpg)
+  ![Giao diện 8](image/z7899046185627_f2180bbaf05f4be456b2f98af62b4dc9.jpg)
+  ![Giao diện 9](image/z7899046192085_949efc028dfad5b1c70e09cc93acf86e.jpg)
+  ![Giao diện 10](image/z7899046198195_53c04b02ef524ceb1e4445e50201c11e.jpg)
+
+### 3.2. Hướng dẫn khởi chạy nhanh
+
+#### 1. Cài đặt thư viện cần thiết
+Yêu cầu hệ thống đã cài đặt Python (phiên bản 3.6 trở lên) và thư viện PyQt5:
 ```bash
 pip install PyQt5
 ```
 
-### 2. Khởi chạy ứng dụng
-Mở terminal tại thư mục gốc `AI LAB` và chạy lệnh:
+#### 2. Khởi chạy ứng dụng
+Mở terminal hoặc command prompt tại thư mục gốc `AI LAB` và chạy lệnh:
 ```bash
 py ThuatToan/main.py
 ```
 
----
-
-## 📘 Chi tiết về các thuật toán giải 8-Puzzle
-
-Ứng dụng hỗ trợ trực quan hóa 5 thuật toán tìm kiếm cốt lõi trong Trí tuệ nhân tạo. Dưới đây là phân tích chi tiết cơ chế hoạt động, cấu trúc dữ liệu và đặc điểm của từng thuật toán được triển khai trong chương trình:
-
-### 1. BFS (Breadth-First Search - Tìm kiếm theo chiều rộng)
-* **Cơ chế hoạt động**: BFS duyệt qua tất cả các trạng thái lân cận ở độ sâu hiện tại trước khi chuyển sang các trạng thái ở độ sâu tiếp theo. Thuật toán lan tỏa như làn sóng từ trạng thái bắt đầu.
-* **Cấu trúc dữ liệu**: Sử dụng hàng đợi **FIFO (First-In-First-Out)** thông qua lớp `collections.deque` làm `frontier` (biên tìm kiếm).
-* **Đặc điểm**:
-  - **Tính hoàn chỉnh**: BFS chắc chắn tìm thấy lời giải nếu lời giải tồn tại.
-  - **Tính tối ưu**: Đảm bảo tìm ra đường đi ngắn nhất (ít bước di chuyển nhất) vì nó duyệt theo từng cấp độ sâu tăng dần.
-  - **Độ phức tạp**: Cả thời gian và bộ nhớ đều là $O(b^d)$ (với $b$ là hệ số nhánh - tối đa là 4 hướng di chuyển, và $d$ là độ sâu lời giải). Do lưu trữ toàn bộ biên duyệt, BFS dễ gây ngốn RAM đối với các bài toán có độ sâu lớn.
+### 3.3. Hướng dẫn phím tắt & tương tác nhanh
+- **Phím mũi tên Phải (`→`):** Tiến sang trạng thái kế tiếp trong lời giải.
+- **Phím mũi tên Trái (`←`):** Quay lại trạng thái trước đó.
+- **Phím cách (`Space`):** Bật/Tắt chế độ mô phỏng tự động (Auto Simulation).
+- **Nút Copy Log:** Nhấp để sao chép nhanh toàn bộ lịch sử các bước giải thuật toán vào clipboard để phân tích hoặc báo cáo.
 
 ---
 
-### 2. DFS (Depth-First Search - Tìm kiếm theo chiều sâu)
-* **Cơ chế hoạt động**: DFS đi sâu nhất có thể dọc theo mỗi nhánh trạng thái trước khi quay lui (backtracking) để kiểm tra các nhánh khác.
-* **Cấu trúc dữ liệu**: Sử dụng ngăn xếp **LIFO (Last-In-First-Out)** thông qua danh sách Python thông thường (gọi hàm `pop()` để lấy phần tử ở cuối).
-* **Đặc điểm**:
-  - **Tính hoàn chỉnh**: Không hoàn chỉnh trên không gian trạng thái vô hạn hoặc nếu gặp chu kỳ (tuy nhiên ứng dụng đã giới hạn 3000 bước duyệt tối đa).
-  - **Tính tối ưu**: Không đảm bảo tối ưu. DFS thường tìm thấy những đường đi vòng vèo, dài hơn nhiều so với BFS.
-  - **Độ phức tạp**: Tiết kiệm bộ nhớ hơn BFS với độ phức tạp không gian chỉ là $O(b \cdot m)$ (với $m$ là độ sâu tối đa của cây tìm kiếm).
+## 4. Kết luận
+Dự án đã triển khai và trực quan hóa thành công 11 thuật toán tìm kiếm đa dạng bao gồm nhóm không có thông tin, có thông tin và tìm kiếm cục bộ để giải bài toán 8-Puzzle. Ứng dụng mang lại một công cụ giáo dục và học tập trực quan giúp:
+- Nắm bắt sinh động cơ chế hoạt động thực tế từng bước của các giải thuật AI Search.
+- So sánh các tham số hiệu suất định lượng (Pop/Step, chi phí đường đi, số node đã duyệt, kích thước frontier tối đa) để hiểu rõ sự cân bằng giữa thời gian thực thi và không gian bộ nhớ của từng nhóm thuật toán.
+- Trực quan hóa các hiện tượng đặc thù của tìm kiếm cục bộ như kẹt cực trị địa phương (leo đồi) hay chùm trạng thái song song (beam search).
 
 ---
 
-### 3. UCS (Uniform Cost Search - Tìm kiếm chi phí đồng nhất)
-* **Cơ chế hoạt động**: UCS mở rộng các nút có chi phí đường đi thấp nhất trước. Trong 8-puzzle thông thường, chi phí mỗi bước là 1 nên UCS nguyên bản sẽ tương đương BFS. 
-* **Cấu trúc dữ liệu**: Hàng đợi ưu tiên **Min-Heap** thông qua thư viện `heapq` của Python.
-* **Đặc điểm trong mã nguồn dự án**:
-  - Trong chương trình này, UCS được cấu hình đặc biệt sử dụng hàm Heuristic **Misplaced Tiles** (số ô nằm sai vị trí so với trạng thái đích) làm độ ưu tiên để sắp xếp trong Min-Heap.
-  - Do đó, thuật toán hoạt động tương đương với **Greedy Best-First Search (Tìm kiếm tham lam tốt nhất)**, ưu tiên mở rộng trạng thái nào có ít ô sai lệch nhất trước để nhanh chóng tiến tới đích.
+## 5. Link github
 
----
-
-### 4. IDS (Iterative Deepening Search - Tìm kiếm sâu dần)
-* **Cơ chế hoạt động**: IDS kết hợp ưu thế tiết kiệm bộ nhớ của DFS và tính tối ưu của BFS. Thuật toán thực hiện lặp đi lặp lại việc tìm kiếm theo chiều sâu giới hạn (Depth-Limited Search) với giới hạn độ sâu (`limit`) tăng dần từ 0, 1, 2... cho đến khi tìm thấy đích.
-* **Đặc điểm**:
-  - **Tính hoàn chỉnh & Tối ưu**: Hoàn chỉnh và tối ưu tương tự BFS (vì độ sâu tăng dần từng bước).
-  - **Bộ nhớ cực thấp**: Chỉ tốn $O(b \cdot d)$ bộ nhớ tại một thời điểm, giải quyết hoàn toàn điểm yếu tốn tài nguyên của BFS.
-  - **Cơ chế chống trùng lặp**: IDS trong chương trình thực hiện kiểm tra chu trình trên nhánh hiện tại (`is_cycle = state in path[:-1]`). Nếu trạng thái đã có trên đường đi hiện tại, thuật toán sẽ bỏ qua trạng thái đó để ngăn chặn vòng lặp vô hạn.
-
----
-
-### 5. Thuật toán A\* (A-Star Search)
-* **Cơ chế hoạt động**: Thuật toán tìm kiếm heuristic phổ biến và hiệu quả nhất. A\* đánh giá các nút bằng cách kết hợp chi phí thực tế đã đi qua và chi phí ước lượng còn lại tới đích thông qua hàm:
-  $$f(n) = g(n) + h(n)$$
-  Trong đó:
-  - **$g(n)$ (Chi phí thực tế)**: Được đo bằng khoảng cách **Manhattan** từ trạng thái hiện tại (tổng số ô di chuyển tối thiểu để đưa các ô số 1-8 về đúng vị trí đích).
-  - **$h(n)$ (Ước lượng Heuristic)**: Tính bằng **Misplaced Tiles** (số ô số nằm sai vị trí so với đích).
-* **Cấu trúc dữ liệu**: Hàng đợi ưu tiên **Min-Heap** (`heapq`).
-* **Đặc điểm**:
-  - **Tối ưu và Hoàn chỉnh**: Nhờ sử dụng Heuristic chấp nhận được (admissible), A\* đảm bảo tìm ra đường đi ngắn nhất với số bước duyệt ít hơn rất nhiều so với BFS hay UCS thông thường nhờ có định hướng thông minh.
-
----
-
-### 6. Thuật toán IDA\* (Iterative Deepening A\* - Tìm kiếm A\* sâu dần)
-* **Cơ chế hoạt động**: IDA\* kết hợp cơ chế giới hạn ngưỡng chi phí của thuật toán IDS với hàm đánh giá heuristic thông minh của A\*. 
-  - Thay vì tăng giới hạn độ sâu từng cấp như IDS, IDA\* sử dụng ngưỡng cắt dựa trên giá trị hàm số $f(n) = g(n) + h(n)$ (với $g(n)$ là khoảng cách Manhattan và $h(n)$ là số ô sai vị trí `misplaced`).
-  - Trong mỗi vòng lặp, thuật toán thực hiện tìm kiếm theo chiều sâu (DFS). Nếu gặp một nút có $f(n)$ vượt quá ngưỡng hiện tại (`f_limit`), nhánh đó sẽ bị cắt (`cutoff`).
-  - Khi một vòng lặp tìm kiếm kết thúc mà không tìm thấy đích, ngưỡng giới hạn tiếp theo sẽ được cập nhật bằng giá trị $f(n)$ nhỏ nhất trong số các nút bị cắt nhánh mà vượt quá ngưỡng cũ.
-* **Đặc điểm**:
-  - **Tối ưu và Hoàn chỉnh**: Đảm bảo tìm ra lời giải tối ưu tương tự A\* (do ngưỡng $f$ tăng dần và hàm heuristic chấp nhận được).
-  - **Tiết kiệm bộ nhớ**: Khắc phục hoàn toàn nhược điểm tiêu tốn bộ nhớ của A\* bằng cách chỉ lưu trữ nhánh tìm kiếm hiện tại trên ngăn xếp (độ phức tạp không gian chỉ là tuyến tính so với độ sâu đường đi).
-  - **Cơ chế chống lặp**: Kiểm tra và loại bỏ chu kỳ trên nhánh tìm kiếm hiện tại tương tự DFS/IDS.
-
----
-
-### 7. Thuật toán Simple Hill Climbing (Tìm kiếm leo đồi đơn giản)
-* **Cơ chế hoạt động**: Là thuật toán tìm kiếm cục bộ (local search). Từ trạng thái hiện tại, thuật toán duyệt qua các trạng thái lân cận theo thứ tự và di chuyển ngay lập tức sang trạng thái lân cận đầu tiên tìm thấy có giá trị hàm heuristic tốt hơn (khoảng cách Manhattan nhỏ hơn).
-* **Đặc điểm**:
-  - **Không hoàn chỉnh**: Dễ bị kẹt tại các cực trị địa phương (local optimum) hoặc các cao nguyên (plateau/shoulder), nơi không có trạng thái lân cận nào tốt hơn trạng thái hiện tại, ngay cả khi chưa đạt tới đích. Khi bị kẹt, ứng dụng sẽ thông báo trạng thái dừng lại bằng biểu tượng kẹt `⛰️`.
-  - **Không tối ưu**: Chỉ di chuyển theo độ dốc heuristic tốt hơn đầu tiên mà không có cái nhìn toàn cục, do đó đường đi tìm được (nếu có) có thể không phải là ngắn nhất.
-  - **Cực kỳ tiết kiệm bộ nhớ**: Chỉ lưu trữ trạng thái hiện tại và đánh giá các lân cận của nó, không duy trì danh sách biên mở rộng (frontier) lớn như BFS hay A\*.
-
----
-
-### 8. Thuật toán Steepest-Ascent Hill Climbing (Tìm kiếm leo đồi dốc nhất)
-* **Cơ chế hoạt động**: Khác với Simple Hill Climbing di chuyển sang lân cận tốt hơn *đầu tiên*, Steepest-Ascent Hill Climbing đánh giá *tất cả* các trạng thái lân cận của trạng thái hiện tại và chọn ra trạng thái có giá trị hàm heuristic tốt nhất (khoảng cách Manhattan nhỏ nhất). Thuật toán chỉ di chuyển tới trạng thái tốt nhất này nếu nó có chi phí tốt hơn trạng thái hiện tại.
-* **Đặc điểm**:
-  - **Dễ kẹt cực trị**: Giống như Simple Hill Climbing, nó dễ bị kẹt tại các cực trị địa phương (local optimum) hoặc cao nguyên (plateau). Ứng dụng cũng hiển thị biểu tượng kẹt `⛰️` để biểu thị trạng thái dừng lại khi kẹt.
-  - **Tối ưu hơn cục bộ**: Bằng cách chọn hướng đi có độ dốc cao nhất (dốc nhất), thuật toán thường tiếp cận đích nhanh hơn Simple Hill Climbing ở mỗi bước di chuyển cục bộ.
-  - **Tiết kiệm bộ nhớ**: Giống các thuật toán tìm kiếm cục bộ khác, nó chỉ lưu giữ trạng thái hiện tại và các lân cận của nó tại mỗi bước.
-
----
-
-### 9. Thuật toán Stochastic Hill Climbing (Tìm kiếm leo đồi ngẫu nhiên)
-* **Cơ chế hoạt động**: Stochastic Hill Climbing là một biến thể của leo đồi. Thay vì chọn lân cận tốt hơn đầu tiên (Simple) hay tốt nhất (Steepest-Ascent), thuật toán này lọc ra *tất cả* các trạng thái lân cận tốt hơn trạng thái hiện tại (khoảng cách Manhattan nhỏ hơn), sau đó chọn **ngẫu nhiên** một trạng thái trong số đó để di chuyển tới.
-* **Đặc điểm**:
-  - **Tính ngẫu nhiên**: Các lần chạy khác nhau với cùng một trạng thái bắt đầu có thể tạo ra các đường đi hoặc kết quả khác nhau (giải được hoặc bị kẹt ở các cực trị địa phương khác nhau).
-  - **Tránh cực trị địa phương**: Việc chọn ngẫu nhiên giúp thuật toán thỉnh thoảng có cơ hội thoát khỏi các vùng phẳng hoặc đi theo các nhánh khác nhau để tránh rơi vào cùng một cực trị cục bộ cố định như leo đồi tất định.
-  - **Tiết kiệm bộ nhớ**: Chỉ cần lưu trữ các lân cận tốt hơn của trạng thái hiện tại tại mỗi bước duyệt.
-
----
-
-### 10. Thuật toán Random Restart Hill Climbing (Leo đồi khởi động lại ngẫu nhiên)
-* **Cơ chế hoạt động**: Thuật toán leo đồi dốc nhất (Steepest-Ascent Hill Climbing) được thực thi từ trạng thái bắt đầu. Nếu thuật toán bị kẹt ở cực trị cục bộ (local optimum) hoặc cao nguyên nhiễu mà chưa đạt đến đích, thuật toán sẽ tự động **khởi động lại (restart)** bằng cách phát sinh một trạng thái solvable khởi đầu ngẫu nhiên mới và tiếp tục thực hiện leo đồi từ đó. Quá trình này được lặp đi lặp lại cho đến khi tìm thấy trạng thái đích hoặc đạt giới hạn tối đa số bước duyệt.
-* **Đặc điểm**:
-  - **Độ tin cậy cực cao**: Khắc phục nhược điểm cốt lõi của leo đồi thông thường bằng cách tự động vượt qua các cực trị cục bộ nhờ các lần khởi động lại ngẫu nhiên. Gần như 100% tìm thấy đích nếu cấu hình số lần restart hoặc số bước duyệt đủ lớn.
-  - **Giải pháp tối ưu cục bộ**: Đường đi dẫn tới đích là đường đi tính từ trạng thái khởi tạo ngẫu nhiên thành công cuối cùng tới đích. Các đường đi kẹt trước đó sẽ được ghi nhận và hiển thị dạng bước chuyển đổi `🔄 KHỞI ĐỘNG LẠI` trong lịch sử trực quan hóa.
-  - **Dễ dàng theo dõi**: Giao diện hiển thị trực quan số lần restart hiện tại trên thẻ thông số chuyên biệt để người dùng nắm bắt tần suất kẹt của cấu hình bàn cờ hiện tại.
-
----
-
-### 11. Thuật toán Local Beam Search (Tìm kiếm theo chùm cục bộ)
-* **Cơ chế hoạt động**: Khác với leo đồi chỉ duy trì một trạng thái hiện tại, Local Beam Search duy trì một tập hợp gồm $k$ trạng thái (trong ứng dụng này $k=4$). Ở mỗi bước, thuật toán tạo ra tất cả các trạng thái lân cận của cả $k$ trạng thái này. Sau đó, nó sẽ đánh giá và chỉ chọn ra đúng $k$ trạng thái có giá trị heuristic tốt nhất từ toàn bộ các trạng thái vừa sinh ra để làm tập trạng thái cho bước tiếp theo.
-* **Đặc điểm**:
-  - **Khám phá song song hiệu quả**: Việc duy trì $k$ trạng thái giúp thuật toán đồng thời khám phá nhiều nhánh hứa hẹn, vượt trội hơn so với việc chạy leo đồi độc lập $k$ lần vì các nhánh sinh ra từ cùng một chùm có thể chia sẻ thông tin (những nhánh xấu sẽ nhanh chóng bị loại bỏ để nhường chỗ cho các lân cận tốt hơn từ nhánh khác).
-  - **Tránh điểm mù cục bộ**: Khả năng duy trì nhiều trạng thái giúp thuật toán ít bị kẹt vào các cực trị địa phương hơn so với leo đồi thông thường.
-  - **Tiết kiệm bộ nhớ hơn A\***: Chỉ lưu trữ tối đa $k$ trạng thái tốt nhất ở mỗi cấp độ, giải quyết vấn đề bùng nổ không gian bộ nhớ của A\* trong khi vẫn có cái nhìn bao quát hơn Hill Climbing.
-
----
-
-## 🎨 Giao diện & Các tính năng tương tác hỗ trợ
-
-* **Midnight Navy Theme**: Giao diện tối hiện đại, hạn chế mỏi mắt, phân biệt rõ các vùng chức năng bằng độ tương phản màu sắc hợp lý.
-* **Glow Gradients**: Các ô số trên bàn cờ có hiệu ứng chuyển màu và đổ bóng nổi 3D (Xanh Emerald cho ô đúng vị trí, Đỏ Crimson cho ô sai vị trí, và Indigo cho ô vừa di chuyển).
-* **Bảng Thống kê (Metric Cards)**: Cập nhật chi tiết chỉ số Pop/Step, Cost ($f = g + h$), trạng thái đã duyệt và kích thước biên biên duyệt (Frontier).
-* **Phím tắt điều hướng nhanh**:
-  - Phím mũi tên phải `→` : Tiến sang bước tiếp theo.
-  - Phím mũi tên trái `←` : Quay lại bước trước đó.
-  - Phím cách `Space` : Bật/Tắt chế độ mô phỏng tự động (Auto).
-* **Copy Log**: Nhấn nút `Copy Log` ở panel phải để sao chép nhanh toàn bộ lịch sử các bước duyệt thuật toán vào clipboard.
-* **Bàn cờ phụ (Frontier & Explored)**: Các trạng thái biên kề duyệt tiếp theo và danh sách các trạng thái đã xét trước đó được thu gọn tiện lợi ở panel phải.
+https://github.com/NguyenNguyen0210/tri-tue-nhan-tao
