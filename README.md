@@ -42,6 +42,10 @@ Nhóm thuật toán này tìm kiếm lời giải mà không sử dụng bất k
   - *Ưu điểm:* Đảm bảo tính đầy đủ (completeness) và tính tối ưu (optimality) - luôn tìm ra lời giải ngắn nhất khi chi phí bước đi bằng nhau.
   - *Nhược điểm:* Yêu cầu lượng bộ nhớ rất lớn $O(b^d)$ để lưu trữ biên tìm kiếm và các trạng thái đã xét, dễ gây tràn bộ nhớ khi độ sâu lớn.
 
+  **Hình ảnh minh họa quá trình chạy BFS:**
+  
+  ![BFS](https://github.com/user-attachments/assets/4699db84-3ad6-4cc1-9e07-efbf14314b29)
+
 * **DFS (Depth-First Search):**
   DFS khám phá không gian tìm kiếm theo nhánh sâu nhất có thể trước khi thực hiện quay lui (backtracking).
   - *Cấu trúc dữ liệu:* Sử dụng ngăn xếp **LIFO (Last-In-First-Out)** qua danh sách Python (`pop()`).
@@ -133,20 +137,6 @@ Tìm kiếm cục bộ chỉ hoạt động trên trạng thái hiện tại và
 - **Metric Cards (Bảng Thống kê):** Cập nhật liên tục các thông số như Pop/Step, Cost ($f = g + h$), số trạng thái đã duyệt và kích thước biên tìm kiếm (Frontier Size).
 - **Bàn cờ phụ (Frontier & Explored):** Hiển thị trực quan danh sách các trạng thái kề sắp duyệt và các trạng thái đã xét dưới dạng panel thu gọn ở góc phải.
 
-#### Một số hình ảnh giao diện ứng dụng:
-*(Các hình ảnh chụp màn hình thực tế được lưu trữ trong thư mục [image](file:///c:/Users/Nguyen Nguyen/OneDrive/Desktop/AI LAB/image))*
-
-- **Giao diện chính chạy thuật toán:**
-  ![Giao diện 1](image/z7891675269158_b310246b78f2869ebb657b5793514925.jpg)
-  ![Giao diện 2](image/z7891675280650_83f164d2753329d34a619d3e1b76dcfe.jpg)
-  ![Giao diện 3](image/z7891675285600_7355e004071c261abea1537f777ab04f.jpg)
-  ![Giao diện 4](image/z7891675310722_fc3a2f3ade2ab6ab61e6c89d6e0806ea.jpg)
-  ![Giao diện 5](image/z7891675324858_3fb4ddd075b29221cb41ece264078a40.jpg)
-  ![Giao diện 6](image/z7891675325631_f8d02f738270adf3a4e416512542b5f4.jpg)
-  ![Giao diện 7](image/z7891675351171_f3e92cb4211254f865584f8eb4522da1.jpg)
-  ![Giao diện 8](image/z7899046185627_f2180bbaf05f4be456b2f98af62b4dc9.jpg)
-  ![Giao diện 9](image/z7899046192085_949efc028dfad5b1c70e09cc93acf86e.jpg)
-  ![Giao diện 10](image/z7899046198195_53c04b02ef524ceb1e4445e50201c11e.jpg)
 
 ### 3.2. Hướng dẫn khởi chạy nhanh
 
