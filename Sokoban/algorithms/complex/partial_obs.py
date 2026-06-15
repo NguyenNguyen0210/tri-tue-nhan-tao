@@ -134,6 +134,30 @@ def partial_obs_steps(start, goals, walls):
                 
         if next_state is None:
             # Nước đi không khả thi thực tế (ví dụ đâm vào tường chưa biết) -> Cập nhật bản đồ và lặp lại
+            dr, dc = {"↑": (-1, 0), "↓": (1, 0), "←": (0, -1), "→": (0, 1)}[next_d]
+            target_pos = (pr + dr, pc + dc)
+            if target_pos in walls:
+                known_walls.add(target_pos)
+            if target_pos in known_boxes:
+                next_box_pos = (pr + 2 * dr, pc + 2 * dc)
+                if next_box_pos in walls:
+                    known_walls.add(next_box_pos)
+            
+            steps.append({
+                'type': 'skip',
+                'state': current_state,
+                'cost': h_curr,
+                'moves': current_moves,
+                'path': current_path,
+                'neighbors': [ (n[0], n[1]) for n in nbrs ],
+                'added': [],
+                'frontier': [{'state': current_state, 'via': next_d, 'cost': h_curr}],
+                'frontier_count': 1,
+                'visited_count': len(explored_global),
+                'explored': [(exp[0], exp[1], exp[2][-1] if exp[2] else 'start') for exp in explored_global[-12:]],
+                'depth': len(current_moves), 'limit': None, 'iteration': None,
+                'message': f'🚧 Nước đi {next_d} bị chặn bởi tường ẩn! Phát hiện tường mới và lập kế hoạch lại.'
+            })
             continue
             
         steps.append({
@@ -144,7 +168,7 @@ def partial_obs_steps(start, goals, walls):
             'path': current_path,
             'neighbors': [ (n[0], n[1]) for n in nbrs ],
             'added': [(next_state, next_d, manhattan(next_state, goals))],
-            'frontier': [{'state': next_state[0], 'via': next_d, 'cost': manhattan(next_state, goals)}],
+            'frontier': [{'state': next_state, 'via': next_d, 'cost': manhattan(next_state, goals)}],
             'frontier_count': 1,
             'visited_count': len(explored_global),
             'explored': [(exp[0], exp[1], exp[2][-1] if exp[2] else 'start') for exp in explored_global[-12:]],

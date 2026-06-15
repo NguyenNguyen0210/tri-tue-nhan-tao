@@ -108,7 +108,7 @@ class SokobanBoard(QWidget):
                     # Vẽ hộp bo góc nhẹ
                     painter.setBrush(QBrush(QColor(color)))
                     painter.setPen(QPen(QColor(border_color), 2))
-                    painter.drawRoundRect(x + 4, y + 4, self.tile_size - 8, self.tile_size - 8, 15, 15)
+                    painter.drawRoundedRect(x + 4, y + 4, self.tile_size - 8, self.tile_size - 8, 6.0, 6.0)
                     
                     # Vẽ hình chéo "X" trên hộp cho thêm phong cách
                     painter.setPen(QPen(QColor(border_color), 1))
@@ -645,7 +645,7 @@ class MainWindow(QMainWindow):
         for fn_node in step.get('frontier', [])[:10]:
             # fn_node là dict chứa state
             # Tạo mini board
-            fn_state = (fn_node['state'], self.initial_boxes) # Chỉ minh họa player pos
+            fn_state = fn_node['state']
             mb = MiniSokobanBoard(self.walls, self.goals, fn_state)
             self.front_scroll_layout.addWidget(mb)
             

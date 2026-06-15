@@ -40,6 +40,7 @@ class BoardWidget(QWidget):
     def _style(self, kind):
         base = "border-radius:10px;font-family:'Segoe UI',Consolas;font-weight:bold;"
         if kind == "empty":  return base + "background:#0c0e17;border:2px dashed #2a3352;color:transparent;"
+        if kind == "hidden": return base + "background:#0c0e17;border:1.5px solid #1f2937;color:#4b5563;"
         if kind == "ok":     return base + "background:qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #10b981, stop:1 #065f46);border:1.5px solid #34d399;color:#ffffff;"
         if kind == "wrong":  return base + "background:qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #ef4444, stop:1 #991b1b);border:1.5px solid #f87171;color:#ffffff;"
         if kind == "moved":  return base + "background:qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #6366f1, stop:1 #3730a3);border:1.5px solid #818cf8;color:#ffffff;"
@@ -52,6 +53,8 @@ class BoardWidget(QWidget):
             c = self.cells[i]
             if v == 0:
                 c.setText(""); c.setStyleSheet(self._style("empty"))
+            elif v == -1:
+                c.setText("?"); c.setStyleSheet(self._style("hidden"))
             else:
                 c.setText(str(v))
                 if special:         c.setStyleSheet(self._style(special))
@@ -81,10 +84,11 @@ class MiniBoard(QWidget):
         gw = QWidget(); gw.setStyleSheet("background:transparent;border:none;")
         gl = QGridLayout(gw); gl.setSpacing(2); gl.setContentsMargins(0, 0, 0, 0)
         for i, v in enumerate(state):
-            lbl = QLabel("" if v==0 else str(v))
+            lbl = QLabel("" if v==0 else ("?" if v==-1 else str(v)))
             lbl.setFixedSize(26, 26); lbl.setAlignment(Qt.AlignCenter)
             lbl.setFont(QFont("Segoe UI", 9, QFont.Bold))
             if v == 0:   lbl.setStyleSheet("background:#0c0e17;border:1px dashed #2a3352;border-radius:5px;color:transparent;")
+            elif v == -1: lbl.setStyleSheet("background:#0c0e17;border:1px solid #1f2937;border-radius:5px;color:#4b5563;")
             elif v==GOAL[i]: lbl.setStyleSheet("background:qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #10b981, stop:1 #065f46);border-radius:5px;color:#ffffff;")
             else:        lbl.setStyleSheet("background:qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #ef4444, stop:1 #991b1b);border-radius:5px;color:#ffffff;")
             gl.addWidget(lbl, i//3, i%3)

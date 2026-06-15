@@ -134,7 +134,7 @@ def sarsa_steps(start, goals, walls):
         for nb_s, d, is_push in nbrs:
             q_val = q_table.get((state, d), 0.0)
             frontier_render.append({
-                'state': nb_s[0], 'cost': q_val, 'via': d
+                'state': nb_s, 'cost': q_val, 'via': d
             })
         frontier_render.sort(key=lambda x: x['cost'], reverse=True)
         
