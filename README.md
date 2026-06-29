@@ -96,7 +96,7 @@ Hoạt động trực tiếp trên trạng thái hiện tại và các trạng t
   - **Nhược điểm:** Rất dễ bị kẹt tại cực trị địa phương (local optimum) hoặc các vùng cao nguyên (plateau).
 
   **Video minh họa chạy Simple Hill Climbing:**
-  <video src="https://github.0/user-attachments/assets/ca697698-35a1-42ad-939b-37e992b00099" controls muted style="max-width: 100%;"></video>
+  <video src="https://github.com/user-attachments/assets/ca697698-35a1-42ad-939b-37e992b00099" controls muted style="max-width: 100%;"></video>
 
 * **Steepest-Ascent Hill Climbing:** Đánh giá toàn bộ các trạng thái lân cận và di chuyển tới trạng thái có Heuristic tốt nhất.
   - **Ưu điểm:** Bộ nhớ tối ưu $O(1)$, tiếp cận đích nhanh hơn Simple Hill Climbing cục bộ vì luôn chọn hướng có độ dốc cao nhất.
@@ -130,6 +130,9 @@ Hoạt động trực tiếp trên trạng thái hiện tại và các trạng t
   - **Ưu điểm:** Có khả năng thoát khỏi các cực trị địa phương nhờ việc chấp nhận các nước đi xấu hơn ở giai đoạn nhiệt độ cao.
   - **Nhược điểm:** Cần tinh chỉnh kỹ các thông số nhiệt độ ban đầu và tốc độ giảm nhiệt (cooling schedule).
 
+  **Video minh họa chạy Simulated Annealing:**
+  <video src="https://github.com/user-attachments/assets/a1a7d90c-17ba-4e65-824d-b07edebf8641" controls muted style="max-width: 100%;"></video>
+
 ---
 
 ### 2.4. Các thuật toán Tìm kiếm trong Môi trường Phức tạp (Complex Environments Search)
@@ -139,13 +142,22 @@ Giải quyết bài toán tìm kiếm khi môi trường không xác định ho�
   - **Ưu điểm:** Cho phép tác tử hoạt động hiệu quả trong môi trường bị che khuất / quan sát một phần.
   - **Nhược điểm:** Phải lập lại kế hoạch nhiều lần khi thông tin quan sát mới mâu thuẫn với giả định.
 
+  **Video minh họa chạy Partial Observation Search:**
+  <video src="https://github.com/user-attachments/assets/a01bbb52-0db5-4ed5-bdb3-f8300480a34b" controls muted style="max-width: 100%;"></video>
+
 * **Belief State Search:** Duyệt BFS trên tập hợp các trạng thái khả dĩ (Belief States) để tìm kiếm chuỗi hành động giải quyết đồng thời mọi thế giới có thể xảy ra.
   - **Ưu điểm:** Đảm bảo tìm ra kế hoạch chắc chắn thành công cho mọi trạng thái ban đầu có thể xảy ra trong tập niềm tin.
   - **Nhược điểm:** Không gian Belief State bùng nổ kích thước rất nhanh ($2^N$), tốn nhiều bộ nhớ và thời gian tính toán.
 
+  **Video minh họa chạy Belief State Search:**
+  <video src="https://github.com/user-attachments/assets/2a49a07f-0e76-4d56-8dde-023b26959291" controls muted style="max-width: 100%;"></video>
+
 * **AND-OR Graph Search:** Tìm kiếm cây kế hoạch dự phòng (Contingent Plan) chứa các nhánh ứng phó với tính không xác định của hành động.
   - **Ưu điểm:** Cung cấp giải pháp toàn diện cho các môi trường không xác định (nondeterministic).
   - **Nhược điểm:** Cấu trúc kế hoạch phức tạp dạng cây/đồ thị, tốn nhiều chi phí lưu trữ và xử lý hơn đường đi đơn.
+
+  **Video minh họa chạy AND-OR Graph Search:**
+  <video src="https://github.com/user-attachments/assets/04824497-2e0a-4216-961c-f22979c08aaa" controls muted style="max-width: 100%;"></video>
 
 ---
 
@@ -156,17 +168,29 @@ Mô hình hóa bàn cờ dưới dạng các biến ràng buộc với miền gi
   - **Ưu điểm:** Đơn giản, tiết kiệm bộ nhớ bằng cách duyệt DFS trên cây gán biến.
   - **Nhược điểm:** Dễ gặp hiện tượng lặp lại thất bại trên các nhánh con (thất bại sớm nhưng phát hiện muộn).
 
+  **Video minh họa chạy Backtracking Search:**
+  <video src="https://github.com/user-attachments/assets/b808881e-2844-4acb-9543-3dd80c0c8bf1" controls muted style="max-width: 100%;"></video>
+
 * **Forward Checking Search:** Kết hợp Backtracking với việc kiểm tra và cắt tỉa sớm các giá trị trong miền của các biến chưa gán nếu vi phạm ràng buộc.
   - **Ưu điểm:** Phát hiện sớm các mâu thuẫn và cắt tỉa các nhánh mâu thuẫn ngay lập tức, giảm số bước quay lui.
   - **Nhược điểm:** Tốn thêm chi phí kiểm tra miền giá trị tại mỗi bước gán biến.
+
+  **Video minh họa chạy Forward Checking Search:**
+  <video src="https://github.com/user-attachments/assets/c5b01917-d352-4d34-8026-9a0448574825" controls muted style="max-width: 100%;"></video>
 
 * **AC-3 (Arc Consistency 3):** Duy trì tính nhất quán cung (arc consistency) trên các ràng buộc để thu hẹp miền giá trị trước và trong quá trình tìm kiếm.
   - **Ưu điểm:** Cắt tỉa không gian tìm kiếm mạnh mẽ bằng cách loại bỏ các giá trị không thể thuộc lời giải ngay từ đầu.
   - **Nhược điểm:** Phải quản lý và xử lý hàng đợi các cung (arcs), tốn chi phí khởi tạo và kiểm tra.
 
+  **Video minh họa chạy AC-3:**
+  <video src="https://github.com/user-attachments/assets/2e377dd7-5553-4360-a0f7-41bd2cb97da0" controls muted style="max-width: 100%;"></video>
+
 * **Min Conflict Search:** Thuật toán tìm kiếm cục bộ cho CSP, chọn biến bị xung đột nhiều nhất và di chuyển để tối thiểu hóa số lượng xung đột.
   - **Ưu điểm:** Giải quyết các bài toán CSP kích thước lớn cực kỳ nhanh chóng.
   - **Nhược điểm:** Có thể bị kẹt tại cực trị địa phương và không đảm bảo tính đầy đủ.
+
+  **Video minh họa chạy Min Conflict Search:**
+  <video src="https://github.com/user-attachments/assets/85f73337-4cf0-426f-8883-646a0bbd4e4a" controls muted style="max-width: 100%;"></video>
 
 ---
 
@@ -177,13 +201,22 @@ Tìm kiếm lời giải trong môi trường có sự tương tác giữa tác 
   - **Ưu điểm:** Cung cấp chiến lược tối ưu chống lại đối thủ thi đấu hoàn hảo.
   - **Nhược điểm:** Số lượng node cần đánh giá bùng nổ theo hàm mũ $O(b^m)$, giới hạn độ sâu khi cây trò chơi lớn.
 
+  **Video minh họa chạy Minimax Search:**
+  <video src="https://github.com/user-attachments/assets/61809418-a897-456b-92d2-cd8cd7a8e7f4" controls muted style="max-width: 100%;"></video>
+
 * **Alpha-Beta Pruning:** Tối ưu hóa Minimax bằng cách cắt tỉa các nhánh cây không ảnh hưởng đến quyết định cuối cùng nhờ hai ngưỡng $\alpha$ và $\beta$.
   - **Ưu điểm:** Giảm một nửa số node cần duyệt trong trường hợp tốt nhất $O(b^{m/2})$, giúp duyệt sâu hơn gấp đôi Minimax.
   - **Nhược điểm:** Hiệu quả cắt tỉa phụ thuộc lớn vào thứ tự sắp xếp các nước đi (move ordering).
 
+  **Video minh họa chạy Alpha-Beta Pruning:**
+  <video src="https://github.com/user-attachments/assets/738edd20-ab52-416b-b071-c139f073de80" controls muted style="max-width: 100%;"></video>
+
 * **Expectimax Search:** Đánh giá cây quyết định với các nút ngẫu nhiên (CHANCE nodes), tính toán giá trị kỳ vọng (Expected Utility).
   - **Ưu điểm:** Mô hình hóa chính xác môi trường ngẫu nhiên hoặc đối thủ không thi đấu tối ưu.
   - **Nhược điểm:** Không thể áp dụng cắt tỉa Alpha-Beta thông thường, phải đánh giá toàn bộ các nhánh ngẫu nhiên.
+
+  **Video minh họa chạy Expectimax Search:**
+  <video src="https://github.com/user-attachments/assets/5716c8d3-a188-465d-9e83-6b5f2afb904d" controls muted style="max-width: 100%;"></video>
 
 ---
 
