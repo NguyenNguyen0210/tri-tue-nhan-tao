@@ -216,7 +216,9 @@ Tìm kiếm lời giải trong môi trường có sự tương tác giữa tác 
   - **Nhược điểm:** Không thể áp dụng cắt tỉa Alpha-Beta thông thường, phải đánh giá toàn bộ các nhánh ngẫu nhiên.
 
   **Video minh họa chạy Expectimax Search:**
-  <video src="https://github.com/user-attachments/assets/5716c8d3-a188-465d-9e83-6b5f2afb904d" controls muted style="max-width: 100%;"></video>
+  <video src="https://github.com/user-attachments/assets/97342817-4bc3-4ec9-89be-5fd8f55a98e4" controls muted style="max-width: 100%;"></video>
+
+
 
 ---
 
